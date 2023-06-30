@@ -1,11 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import ProtectedError
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .forms import CertificateCreateForm, UserLoginForm, CertificateEditForm, CourseCreateForm, CourseEditForm
 from .models import Certificate, Course
+from .serializers import CertificateSerializer
 
 
 def user_login(request):
@@ -57,6 +65,16 @@ class CertificateCreate(LoginRequiredMixin, CreateView):
             'Удостоверение добавлено. Чтобы сгенерировать изображение, нажмите на кнопку ниже',
         )
         return super().form_valid(form)
+
+
+class CertificateAPIView(APIView):
+    def post(self, request):
+        serializer = CertificateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data(), status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CertificateEdit(LoginRequiredMixin, UpdateView):
@@ -115,10 +133,24 @@ class CourseEdit(LoginRequiredMixin, UpdateView):
 class CourseDelete(LoginRequiredMixin, DeleteView):
     model = Course
     context_object_name = 'course'
-    template_name = 'certificates/course_delete.html'
+    # template_name = 'certificates/course_delete.html'
     extra_context = {'title': 'Удаление курса'}
     # form_class = CourseEditForm
 
     def form_valid(self, form):
-        messages.success(self.request, 'Курс удалён')
-        return super().form_valid(form)
+        try:
+            form = super().form_valid(form)
+            messages.success(self.request, 'Курс удалён')
+            return form
+        except ProtectedError:
+            messages.error(self.request, 'Курс не может быть удалён, т.к. есть удостоверения, в которых он указан.')
+            return HttpResponseRedirect(reverse('course_detail', kwargs={'pk': self.kwargs.get('pk')}))
+
+    def get_success_url(self):
+        return reverse('course_list')
+
+
+@login_required(login_url='login')
+def certificate_create_api_view(request):
+    if request.method == 'POST':
+        pass

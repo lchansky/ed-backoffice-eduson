@@ -17,4 +17,6 @@ urlpatterns = [
 
     path("login/", user_login, name="login"),
     path('logout/', user_logout, name='logout'),
+
+    path('api/certificates/create_and_send_image', CertificateAPIView.as_view())
 ]

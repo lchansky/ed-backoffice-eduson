@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <h2>🪪 {{ title }} "{{ course.name }}"</h2>
+    <h2>{{ title }} "{{ course.name }}"</h2>
     <hr>
     <style>
         td {
@@ -29,6 +29,7 @@
 
         <div class="hstack gap-3">
             <a href="{% url 'course_edit' course.pk %}" class="col btn btn-outline-primary btn-lg">Редактировать</a>
+            <a href="{% url 'course_delete' course.pk %}" class="col btn btn-outline-danger btn-lg">Удалить</a>
         </div>
     </div>
 

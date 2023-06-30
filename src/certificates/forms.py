@@ -20,12 +20,7 @@ class CertificateEditForm(ModelForm):
         model = Certificate
         fields = '__all__'
         widgets = {
-            'date': DateInput(
-                attrs={
-                    'class': 'form-control',
-                    'type': 'date'
-                }
-            ),
+            'date': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'student_fio': TextInput(attrs={'class': 'form-control'}),
             'course': Select(attrs={'class': 'form-select'}),
         }

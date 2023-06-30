@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>Вы уверены, что хотите удалить "{{ course.name }}"</h2>
+    <hr>
+    <style>
+        td {
+           width: 50%
+        }
+    </style>
+    <form action="{% url 'course_delete' course.pk %}" method="post" class="text-start" style="max-width:600px;">
+
+        {% csrf_token %}
+        <div class="hstack gap-3">
+            <div><a href="{% url 'course_detail' course.pk %}" class="col btn btn-outline-primary btn-lg">Отменить действие</a></div>
+            <div><button type="submit" class="col btn btn-outline-danger btn-lg">Удалить</button></div>
+        </div>
+    </form>
+
+
+{% endblock %}

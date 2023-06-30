@@ -13,8 +13,7 @@
                     <th scope="col">Номер</th>
                     <th scope="col">Дата окончания</th>
                     <th scope="col">ФИО студента</th>
-                    <th scope="col">Название курса</th>
-                    <th scope="col">Длительность (ч)</th>
+                    <th scope="col">Курс</th>
                     <th scope="col">Изменение</th>
                     <th scope="col">Фото</th>
                     <th scope="col">Печать</th>
@@ -24,10 +23,15 @@
                 {% for certificate in certificates %}
                     <tr>
                         <td><a href="{% url 'certificate_detail' certificate.pk %}">{{ certificate.pk }}</a></td>
-                        <td><a href="{% url 'certificate_detail' certificate.pk %}">{{ certificate.date }}</a></td>
-                        <td><a href="{% url 'certificate_detail' certificate.pk %}">{{ certificate.student_fio }}</a></td>
-                        <td><a href="{% url 'certificate_detail' certificate.pk %}">{{ certificate.course_name }}</a></td>
-                        <td><a href="{% url 'certificate_detail' certificate.pk %}">{{ certificate.course_hours }}</a></td>
+                        <td>{{ certificate.date }}</td>
+                        <td>{{ certificate.student_fio }}</td>
+                        <td>
+                            {% if certificate.course %}
+                                <a href="{% url 'course_detail' certificate.course.pk %}">{{ certificate.course }}</a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                         <td><a href="{% url 'certificate_edit' certificate.pk %}">✏️</a></td>
                         <td><a href="">🖼</a></td>
                         <td><a href="">🖨</a></td>

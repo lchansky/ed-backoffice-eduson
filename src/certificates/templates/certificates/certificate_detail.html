@@ -37,7 +37,7 @@
                 <td class="fs-5">Курс</td>
                 <td class="fs-6">
                     {% if certificate.course %}
-                        <a href="{% url 'course_detail' certificate.course %}">
+                        <a href="{% url 'course_detail' certificate.course.pk %}">
                             {{ certificate.course }}
                         </a>
                     {% else %}
