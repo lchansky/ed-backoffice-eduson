@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <hr>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Название курса</th>
+            <th scope="col">Длительность (ч)</th>
+            <th scope="col">Изменение</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for course in courses %}
+            <tr>
+                <td><a href="{% url 'course_detail' course.pk %}">{{ course.name }}</a></td>
+                <td>{{ course.hours }}</td>
+                <td><a href="{% url 'course_edit' course.pk %}">✏️</a></td>
+            </tr>
+        {% empty %}
+            Здесь ничего нет. Добавьте первый курс!
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,58 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <div class="btn btn-outline-primary">
+                <div class="font-monospace fs-4">
+                    Backoffice Eduson
+                </div>
+            </div>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        🪪 Удостоверения об образовании
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'certificate_create' %}">➕ Добавить удостоверение</a></li>
+                        <li><a class="dropdown-item" href="{% url 'certificate_list' %}">📋 Список удостоверений</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        📚 Курсы
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'course_create' %}">➕ Добавить курс</a></li>
+                        <li><a class="dropdown-item" href="{% url 'course_list' %}">📋 Список курсов</a></li>
+                    </ul>
+                </li>
+
+
+            </ul>
+            <span class="navbar-text">
+            {% if request.user.is_authenticated %}
+                <div class="hstack gap-3">
+                    <div class="fs-6">
+                        Добро пожаловать, {{ user.username }}.
+                    </div>
+                    <div class="vr"></div>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger">Выход</a>
+                </div>
+            {% else %}
+                <div class="hstack gap-3">
+                    <a href="{% url 'login' %}" class="btn btn-outline-secondary">Вход</a>
+                </div>
+            {% endif %}
+            </span>
+        </div>
+    </div>
+</nav>

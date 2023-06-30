@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}
+🪪 №{{ certificate.pk }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>🪪 {{ title }} №{{ certificate.pk }}</h2>
+    <hr>
+    <style>
+        td {
+           width: 50%
+        }
+    </style>
+    <div class="list-group-item list-group-item text-start fs-4" style="max-width:600px;">
+        <table class="table" style="max-width:600px;">
+            <tbody>
+            <tr>
+                <td class="fs-5">Номер</td>
+                <td class="fs-6">
+                    {{ certificate.pk }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">ФИО студента</td>
+                <td class="fs-6">
+                    {{ certificate.student_fio }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Дата окончания</td>
+                <td class="fs-6">
+                    {{ certificate.date }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Курс</td>
+                <td class="fs-6">
+                    {% if certificate.course %}
+                        <a href="{% url 'course_detail' certificate.course %}">
+                            {{ certificate.course }}
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+        <div class="hstack gap-3">
+            <a href="{% url 'certificate_edit' certificate.pk %}" class="col btn btn-outline-primary btn-lg">Редактировать</a>
+        </div>
+    </div>
+
+
+{% endblock %}

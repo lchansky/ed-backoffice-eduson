@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>🪪 {{ title }} "{{ course.name }}"</h2>
+    <hr>
+    <style>
+        td {
+           width: 50%
+        }
+    </style>
+    <div class="list-group-item list-group-item text-start fs-4" style="max-width:600px;">
+        <table class="table" style="max-width:600px;">
+            <tbody>
+            <tr>
+                <td class="fs-5">Название</td>
+                <td class="fs-6">{{ course.name }}</td>
+            </tr>
+            <tr>
+                <td class="fs-5">Длительность (ч)</td>
+                <td class="fs-6">{{ course.hours }}</td>
+            </tr>
+
+            </tbody>
+        </table>
+
+        <div class="hstack gap-3">
+            <a href="{% url 'course_edit' course.pk %}" class="col btn btn-outline-primary btn-lg">Редактировать</a>
+        </div>
+    </div>
+
+
+{% endblock %}
