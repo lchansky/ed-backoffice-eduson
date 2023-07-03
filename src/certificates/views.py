@@ -1,6 +1,7 @@
+import os
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect
@@ -10,8 +11,10 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from telebot import TeleBot
 
 from .forms import CertificateCreateForm, UserLoginForm, CertificateEditForm, CourseCreateForm, CourseEditForm
+from .images import CertificateImageGenerator
 from .models import Certificate, Course
 from .serializers import CertificateSerializer
 
@@ -72,7 +75,21 @@ class CertificateAPIView(APIView):
         serializer = CertificateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-
+            image_generator = CertificateImageGenerator()
+            image = image_generator.generate_rgb_certificate(certificate=serializer.instance)
+            filename = f'Удостоверение №{serializer.instance.pk}.png'
+            image2 = image_generator.generate_certificate_for_print(certificate=serializer.instance)
+            filename2 = f'Удостоверение №{serializer.instance.pk} для печати.png'
+            url = serializer.instance.get_absolute_url()
+            TeleBot(os.getenv('TG_TOKEN')).send_document(
+                os.getenv('TG_CHAT_ID'),
+                document=(filename, image.getvalue()),
+            )
+            TeleBot(os.getenv('TG_TOKEN')).send_document(
+                os.getenv('TG_CHAT_ID'),
+                document=(filename2, image2.getvalue()),
+                caption=f'{request.build_absolute_uri(url)}',
+            )
             return Response(serializer.data(), status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -148,9 +165,3 @@ class CourseDelete(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('course_list')
-
-
-@login_required(login_url='login')
-def certificate_create_api_view(request):
-    if request.method == 'POST':
-        pass
