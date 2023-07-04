@@ -47,6 +47,7 @@ class CertificateList(LoginRequiredMixin, ListView):
     template_name = 'certificates/certificate_list.html'
     context_object_name = 'certificates'
     extra_context = {'title': 'Список удостоверений об образовании'}
+    login_url = 'login'
 
 
 class CertificateDetail(LoginRequiredMixin, DetailView):
@@ -54,6 +55,7 @@ class CertificateDetail(LoginRequiredMixin, DetailView):
     template_name = 'certificates/certificate_detail.html'
     context_object_name = 'certificate'
     extra_context = {'title': 'Удостоверение'}
+    login_url = 'login'
 
 
 class CertificateCreate(LoginRequiredMixin, CreateView):
@@ -62,6 +64,7 @@ class CertificateCreate(LoginRequiredMixin, CreateView):
     context_object_name = 'certificate'
     form_class = CertificateCreateForm
     extra_context = {'title': 'Добавление удостоверения'}
+    login_url = 'login'
 
     def form_valid(self, form):
         messages.success(
@@ -101,6 +104,7 @@ class CertificateEdit(LoginRequiredMixin, UpdateView):
     template_name = 'certificates/certificate_edit.html'
     extra_context = {'title': 'Редактирование удостоверения'}
     form_class = CertificateEditForm
+    login_url = 'login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Изменения сохранены')
@@ -133,6 +137,7 @@ class CourseList(LoginRequiredMixin, ListView):
     template_name = 'certificates/course_list.html'
     context_object_name = 'courses'
     extra_context = {'title': 'Список удостоверений об образовании'}
+    login_url = 'login'
 
 
 class CourseDetail(LoginRequiredMixin, DetailView):
@@ -140,6 +145,7 @@ class CourseDetail(LoginRequiredMixin, DetailView):
     template_name = 'certificates/course_detail.html'
     context_object_name = 'course'
     extra_context = {'title': '📚 Курс'}
+    login_url = 'login'
 
 
 class CourseCreate(LoginRequiredMixin, CreateView):
@@ -148,6 +154,7 @@ class CourseCreate(LoginRequiredMixin, CreateView):
     context_object_name = 'course'
     form_class = CourseCreateForm
     extra_context = {'title': '📚 Добавление курса'}
+    login_url = 'login'
 
     def form_valid(self, form):
         messages.success(
@@ -163,6 +170,7 @@ class CourseEdit(LoginRequiredMixin, UpdateView):
     template_name = 'certificates/course_edit.html'
     extra_context = {'title': '📚 Редактирование курса'}
     form_class = CourseEditForm
+    login_url = 'login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Изменения сохранены')
@@ -175,6 +183,7 @@ class CourseDelete(LoginRequiredMixin, DeleteView):
     # template_name = 'certificates/course_delete.html'
     extra_context = {'title': 'Удаление курса'}
     # form_class = CourseEditForm
+    login_url = 'login'
 
     def form_valid(self, form):
         try:
