@@ -8,6 +8,7 @@ urlpatterns = [
     path('certificates/create', CertificateCreate.as_view(), name='certificate_create'),
     path('certificates/<int:pk>', CertificateDetail.as_view(), name='certificate_detail'),
     path('certificates/<int:pk>/edit', CertificateEdit.as_view(), name='certificate_edit'),
+    path('certificates/<int:pk>-<str:image_type>.png', certificate_image_view, name='certificate_image'),
 
     path('courses', CourseList.as_view(), name='course_list'),
     path('courses/create', CourseCreate.as_view(), name='course_create'),

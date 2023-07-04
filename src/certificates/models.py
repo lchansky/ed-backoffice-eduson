@@ -10,6 +10,7 @@ class Certificate(Model):
     class Meta:
         verbose_name = 'Удостоверение'
         verbose_name_plural = 'Удостоверения'
+        ordering = ['-pk']
 
     def __str__(self):
         return f'{self.pk}'

@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import ProtectedError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest, Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
@@ -104,6 +104,26 @@ class CertificateEdit(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         messages.success(self.request, 'Изменения сохранены')
         return super().form_valid(form)
+
+
+def certificate_image_view(request: HttpRequest, pk: int, image_type: str):
+    try:
+        certificate = Certificate.objects.get(pk=pk)
+    except:
+        return Http404
+
+    image_generator = CertificateImageGenerator()
+    if image_type == 'image':
+        image = image_generator.generate_rgb_certificate(certificate)
+    elif image_type == 'printer':
+        image = image_generator.generate_certificate_for_print(certificate)
+    else:
+        return Http404
+
+    image.seek(0)
+    response = HttpResponse(content_type='image/png')
+    response.write(image.getvalue())
+    return response
 
 
 class CourseList(LoginRequiredMixin, ListView):

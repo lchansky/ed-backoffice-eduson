@@ -33,8 +33,8 @@
                             {% endif %}
                         </td>
                         <td><a href="{% url 'certificate_edit' certificate.pk %}">✏️</a></td>
-                        <td><a href="">🖼</a></td>
-                        <td><a href="">🖨</a></td>
+                        <td><a href="{% url 'certificate_image' certificate.pk 'image' %}">🖼</a></td>
+                        <td><a href="{% url 'certificate_image' certificate.pk 'printer' %}">🖨</a></td>
                     </tr>
                 {% empty %}
                     Здесь ничего нет. Добавьте первое удостоверение!

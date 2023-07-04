@@ -51,6 +51,8 @@
 
         <div class="hstack gap-3">
             <a href="{% url 'certificate_edit' certificate.pk %}" class="col btn btn-outline-primary btn-lg">Редактировать</a>
+            <a href="{% url 'certificate_image' certificate.pk 'image' %}" class="col btn btn-outline-success btn-lg">🖼 Фото</a>
+            <a href="{% url 'certificate_image' certificate.pk 'printer' %}" class="col btn btn-outline-success btn-lg">🖨 Печать</a>
         </div>
     </div>
 

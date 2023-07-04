@@ -83,10 +83,14 @@ class CertificateImageGenerator:
 
         drawer.draw_centered_text((2580, 380), f"{certificate.student_fio}")
         drawer.draw_centered_text((2580, 780), f"ООО «Эдюсон»")
-        drawer.draw_centered_text((2580, 1340), f"{certificate.course.name}")
 
-        text_hours = numeral_noun_declension(certificate.course.hours, 'академический час', 'академического часа', 'академических часов')
-        drawer.draw_centered_text((2580, 1840), f"{certificate.course.hours} {text_hours}")
+        if certificate.course:
+            drawer.draw_centered_text((2580, 1340), f"{certificate.course.name}")
+            text_hours = numeral_noun_declension(certificate.course.hours, 'академический час', 'академического часа', 'академических часов')
+            drawer.draw_centered_text((2580, 1840), f"{certificate.course.hours} {text_hours}")
+        else:
+            drawer.draw_centered_text((2580, 1340), f"---------------")
+            drawer.draw_centered_text((2580, 1840), f"---------------")
 
         drawer.draw_text((2580, 2036), f"Масолова Е.В.")
         drawer.draw_text((2506, 2122), f"Сокова С.Н.")
