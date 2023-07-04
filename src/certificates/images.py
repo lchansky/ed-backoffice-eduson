@@ -6,7 +6,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 from .models import Certificate
-from src.proj.settings import BASE_DIR
+from django.conf import settings
+
+BASE_DIR = settings.BASE_DIR
 
 
 def numeral_noun_declension(
