@@ -2,6 +2,7 @@ import os
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect, HttpRequest, Http404, HttpResponse
@@ -106,6 +107,7 @@ class CertificateEdit(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
+@login_required(login_url='login')
 def certificate_image_view(request: HttpRequest, pk: int, image_type: str):
     try:
         certificate = Certificate.objects.get(pk=pk)
