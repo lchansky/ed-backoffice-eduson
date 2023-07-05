@@ -61,14 +61,8 @@ class CertificateImageGenerator:
     rgb_template_path = BASE_DIR / 'certificates' / 'media' / 'Шаблон_цвет.png'
     template_for_print_path = BASE_DIR / 'certificates' / 'media' / 'Шаблон_принтер.png'
 
-    def generate_rgb_certificate(self, certificate: Certificate):
-        return self._generate_certificate(self.rgb_template_path, certificate, compress=True)
-
-    def generate_certificate_for_print(self, certificate: Certificate):
-        return self._generate_certificate(self.template_for_print_path, certificate)
-
-    def _generate_certificate(self, template_path: Path, certificate: Certificate, compress=False) -> io.BytesIO:
-        drawer = Drawer(template_path)
+    def generate_rgb_certificate(self, certificate: Certificate) -> io.BytesIO:
+        drawer = Drawer(self.rgb_template_path)
 
         drawer.draw_centered_text((960, 1710), f"{certificate.pk}")
         drawer.draw_centered_text((960, 1900), f"Москва")
@@ -97,9 +91,43 @@ class CertificateImageGenerator:
         drawer.draw_text((2580, 2036), f"Масолова Е.В.")
         drawer.draw_text((2506, 2122), f"Сокова С.Н.")
 
-        if compress:
-            width, height = drawer.image.size
-            drawer.image.thumbnail((width // 2, height // 2), Image.ANTIALIAS)
+        width, height = drawer.image.size
+        drawer.image.thumbnail((width // 2, height // 2), Image.ANTIALIAS)
+
+        buffer = BytesIO()
+        drawer.image.save(buffer, format='PNG')
+        return buffer
+
+    def generate_certificate_for_print(self, certificate: Certificate) -> io.BytesIO:
+
+        drawer = Drawer(self.template_for_print_path)
+
+        drawer.draw_centered_text((910, 1730), f"{certificate.pk}")
+        drawer.draw_centered_text((910, 1910), f"Москва")
+
+        date = certificate.date
+        if date:
+            date = date.strftime('%d.%m.%Y')
+        drawer.draw_centered_text((910, 2095), f"{date}")
+
+        certificate_series = str(certificate.pk)
+        while len(certificate_series) < 4:
+            certificate_series = '0' + certificate_series
+        drawer.draw_centered_text((910, 2240), f"Серия ЭД №{certificate_series}")
+
+        drawer.draw_centered_text((2580, 380), f"{certificate.student_fio}")
+        drawer.draw_centered_text((2580, 780), f"ООО «Эдюсон»")
+
+        if certificate.course:
+            drawer.draw_centered_text((2580, 1345), f"{certificate.course.name}")
+            text_hours = numeral_noun_declension(certificate.course.hours, 'академический час', 'академического часа', 'академических часов')
+            drawer.draw_centered_text((2580, 1850), f"{certificate.course.hours} {text_hours}")
+        else:
+            drawer.draw_centered_text((2580, 1345), f"---------------")
+            drawer.draw_centered_text((2580, 1850), f"---------------")
+
+        drawer.draw_text((2580, 2066), f"Масолова Е.В.")
+        drawer.draw_text((2506, 2152), f"Сокова С.Н.")
 
         buffer = BytesIO()
         drawer.image.save(buffer, format='PNG')
