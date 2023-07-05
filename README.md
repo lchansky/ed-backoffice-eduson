@@ -4,7 +4,8 @@
 
 ### Деплой:  
 Просто заполняем env файл и пушим в ветку dokku  
-Либо локально запускаем docker-compose.yml. Сайт будет доступен на `localhost:80`
+Либо локально запускаем docker-compose.yml. Сайт будет доступен на `localhost:80`  
+После деплоя доступен на https://backoffice-eduson.srv1.testla.app/
 
 ##### Env файл:
 ```
