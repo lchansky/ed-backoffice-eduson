@@ -84,9 +84,9 @@ class CertificateAPIView(APIView):
             serializer.save()
             image_generator = CertificateImageGenerator()
             image = image_generator.generate_rgb_certificate(certificate=serializer.instance)
-            filename = f'Удостоверение №{serializer.instance.pk}.png'
+            filename = f'Удостоверение {serializer.instance.pk}.png'
             image2 = image_generator.generate_certificate_for_print(certificate=serializer.instance)
-            filename2 = f'Удостоверение №{serializer.instance.pk} для печати.png'
+            filename2 = f'Удостоверение {serializer.instance.pk} для печати.png'
             url = serializer.instance.get_absolute_url()
             TeleBot(os.getenv('TG_TOKEN')).send_document(
                 os.getenv('TG_CHAT_ID'),

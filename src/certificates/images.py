@@ -9,6 +9,7 @@ from .models import Certificate
 from django.conf import settings
 
 BASE_DIR = settings.BASE_DIR
+BASE_MEDIA_DIR = BASE_DIR / 'certificates' / 'media'
 
 
 def numeral_noun_declension(
@@ -36,14 +37,35 @@ def numeral_noun_declension(
 
 
 class Drawer:
-    font_path = BASE_DIR / 'certificates' / 'media' / 'times_new_roman.ttf'
+    font_path = BASE_MEDIA_DIR / 'times_new_roman.ttf'
 
-    def __init__(self, template_path: Path):
+    def __init__(self, template_path: str | Path):
         self.image = Image.open(template_path)
-        self._draw = ImageDraw.Draw(self.image)
+        self.image.convert("RGBA")
+        self._draw = ImageDraw.Draw(self.image, mode="RGBA")
         self._font = ImageFont.truetype(str(self.font_path), size=48)
 
-    def draw_centered_text(self, xy: tuple[float, float], text: str):
+    def scale_image(self, image: Image, scale: int | float):
+        width, height = image.size
+        image.thumbnail(
+            (round(width * scale / 100), round(height * scale / 100)),
+            Image.ANTIALIAS,
+        )
+        return image
+
+    def draw_picture(self, picture_path: str | Path, xy: tuple[int, int], scale: int | float = 100):
+        picture = Image.open(picture_path)
+        picture = picture.convert("RGBA")
+        if scale != 100:
+            picture = self.scale_image(picture, scale)
+
+        width, height = picture.size
+        mask = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        mask.paste(picture, (0, 0, width, height))
+
+        self.image.paste(picture, xy, mask=mask)
+
+    def draw_centered_text(self, xy: tuple[int, int], text: str):
         x, y = xy
         text_coordinates = self._draw.textbbox((0, 0), text, font=self._font)
         text_width = text_coordinates[2]
@@ -58,8 +80,11 @@ class Drawer:
 
 
 class CertificateImageGenerator:
-    rgb_template_path = BASE_DIR / 'certificates' / 'media' / 'Шаблон_цвет.png'
-    template_for_print_path = BASE_DIR / 'certificates' / 'media' / 'Шаблон_принтер.png'
+    rgb_template_path = BASE_MEDIA_DIR / 'Шаблон_цвет.png'
+    template_for_print_path = BASE_MEDIA_DIR / 'Шаблон_принтер.png'
+    secretary_sign_path = BASE_MEDIA_DIR / 'Сакина_подпись.png'
+    director_sign_path = BASE_MEDIA_DIR / 'Лена_подпись.png'
+    stamp_path = BASE_MEDIA_DIR / 'Печать.png'
 
     def generate_rgb_certificate(self, certificate: Certificate) -> io.BytesIO:
         drawer = Drawer(self.rgb_template_path)
@@ -90,6 +115,10 @@ class CertificateImageGenerator:
 
         drawer.draw_text((2580, 2036), f"Масолова Е.В.")
         drawer.draw_text((2506, 2122), f"Сокова С.Н.")
+
+        drawer.draw_picture(self.stamp_path, (1560, 1810))
+        drawer.draw_picture(self.director_sign_path, (2070, 1980))
+        drawer.draw_picture(self.secretary_sign_path, (1970, 1920))
 
         width, height = drawer.image.size
         drawer.image.thumbnail((width // 2, height // 2), Image.ANTIALIAS)
