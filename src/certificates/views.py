@@ -8,6 +8,8 @@ from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect, HttpRequest, Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from rest_framework import status
 from rest_framework.response import Response
@@ -74,6 +76,7 @@ class CertificateCreate(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class CertificateAPIView(APIView):
     def post(self, request):
         serializer = CertificateSerializer(data=request.data)
