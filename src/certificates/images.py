@@ -39,10 +39,14 @@ def numeral_noun_declension(
 class Drawer:
     font_path = BASE_MEDIA_DIR / 'times_new_roman.ttf'
 
-    def __init__(self, template_path: str | Path):
+    def __init__(self, template_path: str | Path, rgba: bool = False):
         self.image = Image.open(template_path)
-        self.image.convert("RGBA")
-        self._draw = ImageDraw.Draw(self.image, mode="RGBA")
+        self.rgba = rgba
+        if self.rgba:
+            self.image.convert("RGBA")
+            self._draw = ImageDraw.Draw(self.image, mode="RGBA")
+        else:
+            self._draw = ImageDraw.Draw(self.image)
         self._font = ImageFont.truetype(str(self.font_path), size=48)
 
     def scale_image(self, image: Image, scale: int | float):
@@ -55,15 +59,20 @@ class Drawer:
 
     def draw_picture(self, picture_path: str | Path, xy: tuple[int, int], scale: int | float = 100):
         picture = Image.open(picture_path)
-        picture = picture.convert("RGBA")
+        if self.rgba:
+            picture = picture.convert("RGBA")
         if scale != 100:
             picture = self.scale_image(picture, scale)
 
-        width, height = picture.size
-        mask = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-        mask.paste(picture, (0, 0, width, height))
+        if self.rgba:
+            width, height = picture.size
+            mask = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+            mask.paste(picture, (0, 0, width, height))
 
-        self.image.paste(picture, xy, mask=mask)
+            self.image.paste(picture, xy, mask=mask)
+        else:
+            self.image.paste(picture, xy)
+
 
     def draw_centered_text(self, xy: tuple[int, int], text: str):
         x, y = xy
@@ -87,7 +96,7 @@ class CertificateImageGenerator:
     stamp_path = BASE_MEDIA_DIR / 'Печать.png'
 
     def generate_rgb_certificate(self, certificate: Certificate) -> io.BytesIO:
-        drawer = Drawer(self.rgb_template_path)
+        drawer = Drawer(self.rgb_template_path, rgba=True)
 
         drawer.draw_centered_text((960, 1710), f"{certificate.pk}")
         drawer.draw_centered_text((960, 1900), f"Москва")
