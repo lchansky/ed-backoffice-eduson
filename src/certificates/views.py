@@ -1,5 +1,8 @@
+import datetime
+import io
 import os
 
+import pandas as pd
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -134,6 +137,48 @@ def certificate_image_view(request: HttpRequest, pk: int, image_type: str):
     image.seek(0)
     response = HttpResponse(content_type='image/png')
     response.write(image.getvalue())
+    return response
+
+
+def generate_excel_bytes(robots):
+    wb = Workbook()
+    for robot in robots:
+        try:
+            ws = wb[robot.get('model')]
+        except KeyError:
+            ws = wb.create_sheet(robot.get('model'))
+            ws.append(tuple(robot.keys()))
+        ws.append(tuple(robot.values()))
+    if robots:
+        wb.remove(wb.worksheets[0])
+
+    excel_bytes = BytesIO()
+    wb.save(excel_bytes)
+    return excel_bytes.getvalue()
+
+
+def get_weekly_report() -> bytes:
+    start_last_week, end_last_week = get_last_week_range()
+    robots = Robot.objects \
+        .filter(created__gte=start_last_week, created__lte=end_last_week) \
+        .values('model', 'version') \
+        .annotate(count=Count('model')) \
+        .order_by('model')
+    return generate_excel_bytes(robots)
+
+
+@login_required(login_url='login')
+def certificate_download_all_info(request: HttpRequest):
+    certificates = Certificate.objects.all().values('id', 'date', 'student_fio', 'course_id', 'course__name', 'course__hours')
+
+    df = pd.DataFrame(certificates)
+    buffer = io.BytesIO()
+    with pd.ExcelWriter(buffer) as writer:
+        df.to_excel(writer, index=False)
+
+    date = datetime.date.today()
+    response = HttpResponse(buffer.getvalue(), content_type="application/vnd.ms-excel")
+    response['Content-Disposition'] = f'inline; filename=Выгрузка всех удостоверений {date}.xlsx'
     return response
 
 
