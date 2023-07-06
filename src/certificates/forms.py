@@ -1,5 +1,7 @@
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import password_validation
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.forms import ModelForm, TextInput, DateInput, CharField, PasswordInput, NumberInput, Select
+from django.utils.translation import gettext_lazy
 
 from .models import Certificate, Course
 
@@ -70,3 +72,23 @@ class UserLoginForm(AuthenticationForm):
         ),
     )
 
+
+class UserSettingsForm(PasswordChangeForm):
+    old_password = CharField(
+        label=gettext_lazy("Old password"),
+        strip=False,
+        widget=PasswordInput(
+            attrs={"autocomplete": "current-password", "autofocus": True, "class": "form-control"}
+        ),
+    )
+    new_password1 = CharField(
+        label=gettext_lazy("New password"),
+        widget=PasswordInput(attrs={"autocomplete": "new-password", "class": "form-control"}),
+        strip=False,
+        help_text=password_validation.password_validators_help_text_html(),
+    )
+    new_password2 = CharField(
+        label=gettext_lazy("New password confirmation"),
+        strip=False,
+        widget=PasswordInput(attrs={"autocomplete": "new-password", "class": "form-control"}),
+    )

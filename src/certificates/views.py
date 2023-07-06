@@ -4,10 +4,11 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect, HttpRequest, Http404, HttpResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
@@ -16,7 +17,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from telebot import TeleBot
 
-from .forms import CertificateCreateForm, UserLoginForm, CertificateEditForm, CourseCreateForm, CourseEditForm
+from .forms import CertificateCreateForm, UserLoginForm, CertificateEditForm, CourseCreateForm, CourseEditForm, \
+    UserSettingsForm
 from .images import CertificateImageGenerator
 from .models import Certificate, Course
 from .serializers import CertificateSerializer
@@ -199,3 +201,15 @@ class CourseDelete(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('course_list')
+
+
+class SettingsView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'certificates/settings.html'
+    success_url = reverse_lazy('settings')
+    extra_context = {'title': 'Настройки'}
+    form_class = UserSettingsForm
+    login_url = 'login'
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Изменения сохранены')
+        return super().form_valid(form)

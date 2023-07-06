@@ -19,6 +19,7 @@ urlpatterns = [
 
     path("login/", user_login, name="login"),
     path('logout/', user_logout, name='logout'),
+    path('settings/', SettingsView.as_view(), name='settings'),
 
     path('api/certificates/create_and_send_image', csrf_exempt(CertificateAPIView.as_view()))
 ]
