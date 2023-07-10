@@ -8,32 +8,10 @@ from PIL import Image, ImageDraw, ImageFont
 from .models import Certificate
 from django.conf import settings
 
+from .utils import numeral_noun_declension
+
 BASE_DIR = settings.BASE_DIR
 BASE_MEDIA_DIR = BASE_DIR / 'certificates' / 'media'
-
-
-def numeral_noun_declension(
-    number,
-    nominative_singular,
-    genetive_singular,
-    nominative_plural
-):
-    """
-    Возвращает склонение под нужное число объектов.
-    Например:
-    >>> numeral_noun_declension(22, 'собака', 'собаки', 'собак')
-    >>> "собаки"
-"""
-    last_digit = number % 10
-    return (
-        nominative_plural and (number in range(5, 20))
-        or
-        nominative_singular and (1 in (number, last_digit))
-        or
-        genetive_singular and ({number, last_digit} & {2, 3, 4})
-        or
-        nominative_plural
-    )
 
 
 class Drawer:
@@ -116,7 +94,7 @@ class CertificateImageGenerator:
 
         if certificate.course:
             drawer.draw_centered_text((2580, 1340), f"{certificate.course.name}")
-            text_hours = numeral_noun_declension(certificate.course.hours, 'академический час', 'академического часа', 'академических часов')
+            text_hours = numeral_noun_declension(certificate.course.hours, 'академический час', 'академических часа', 'академических часов')
             drawer.draw_centered_text((2580, 1840), f"{certificate.course.hours} {text_hours}")
         else:
             drawer.draw_centered_text((2580, 1340), f"---------------")
