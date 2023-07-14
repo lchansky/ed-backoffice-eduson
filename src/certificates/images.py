@@ -94,7 +94,7 @@ class CertificateImageGenerator:
 
         if certificate.course:
             drawer.draw_centered_text((2580, 1340), f"{certificate.course.name}")
-            text_hours = numeral_noun_declension(certificate.course.hours, 'академический час', 'академических часа', 'академических часов')
+            text_hours = numeral_noun_declension(certificate.course.hours, 'час', 'часа', 'часов')
             drawer.draw_centered_text((2580, 1840), f"{certificate.course.hours} {text_hours}")
         else:
             drawer.draw_centered_text((2580, 1340), f"---------------")
@@ -136,7 +136,7 @@ class CertificateImageGenerator:
 
         if certificate.course:
             drawer.draw_centered_text((2580, 1345), f"{certificate.course.name}")
-            text_hours = numeral_noun_declension(certificate.course.hours, 'академический час', 'академического часа', 'академических часов')
+            text_hours = numeral_noun_declension(certificate.course.hours, 'час', 'часа', 'часов')
             drawer.draw_centered_text((2580, 1850), f"{certificate.course.hours} {text_hours}")
         else:
             drawer.draw_centered_text((2580, 1345), f"---------------")
