@@ -1,0 +1,35 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <br>
+    <div style="text-align: left;">
+        {% for cluster, products in errors_data.items %}
+            <div style="margin: 10px 0 10px 0;">
+                <h2>{{ cluster }}</h2>
+                {% for product in products %}
+
+                    <div style="margin: 10px 0 10px 0;">
+                        <strong>{{ product.product_name }}</strong>
+
+                        <ul class="list-group">
+                            {% for column, error in product.errors.items %}
+                                <li class="list-group-item">
+                                    <i>{{ column }} </i> | Ошибка: {{ error }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+        {% empty %}
+            Ошибок нет.
+        {% endfor %}
+    </div>
+
+{% endblock %}

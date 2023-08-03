@@ -4,14 +4,11 @@ import os
 
 import pandas as pd
 from django.contrib import messages
-from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import PasswordChangeView
 from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect, HttpRequest, Http404, HttpResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
@@ -20,33 +17,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from telebot import TeleBot
 
-from .forms import CertificateCreateForm, UserLoginForm, CertificateEditForm, CourseCreateForm, CourseEditForm, \
-    UserSettingsForm
+from .forms import CertificateCreateForm, CertificateEditForm, CourseCreateForm, CourseEditForm
 from .images import CertificateImageGenerator
 from .models import Certificate, Course
 from .serializers import CertificateSerializer
-
-
-def user_login(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    if request.method == 'POST':
-        form = UserLoginForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, 'Вы успешно авторизованы')
-            next_page = request.GET.get('next', 'home')
-            return redirect(next_page)
-    else:
-        form = UserLoginForm()
-    return render(request, 'login.html', {'form': form})
-
-
-def user_logout(request):
-    """Деавторизует пользователя. Редирект на home"""
-    logout(request)
-    return redirect('login')
 
 
 class CertificateList(LoginRequiredMixin, ListView):
@@ -140,33 +114,6 @@ def certificate_image_view(request: HttpRequest, pk: int, image_type: str):
     return response
 
 
-def generate_excel_bytes(robots):
-    wb = Workbook()
-    for robot in robots:
-        try:
-            ws = wb[robot.get('model')]
-        except KeyError:
-            ws = wb.create_sheet(robot.get('model'))
-            ws.append(tuple(robot.keys()))
-        ws.append(tuple(robot.values()))
-    if robots:
-        wb.remove(wb.worksheets[0])
-
-    excel_bytes = BytesIO()
-    wb.save(excel_bytes)
-    return excel_bytes.getvalue()
-
-
-def get_weekly_report() -> bytes:
-    start_last_week, end_last_week = get_last_week_range()
-    robots = Robot.objects \
-        .filter(created__gte=start_last_week, created__lte=end_last_week) \
-        .values('model', 'version') \
-        .annotate(count=Count('model')) \
-        .order_by('model')
-    return generate_excel_bytes(robots)
-
-
 @login_required(login_url='login')
 def certificate_download_all_info(request: HttpRequest):
     certificates = Certificate.objects.all().values('id', 'date', 'student_fio', 'course_id', 'course__name', 'course__hours')
@@ -186,7 +133,7 @@ class CourseList(LoginRequiredMixin, ListView):
     model = Course
     template_name = 'certificates/course_list.html'
     context_object_name = 'courses'
-    extra_context = {'title': 'Список удостоверений об образовании'}
+    extra_context = {'title': 'Список курсов'}
     login_url = 'login'
 
 
@@ -230,9 +177,7 @@ class CourseEdit(LoginRequiredMixin, UpdateView):
 class CourseDelete(LoginRequiredMixin, DeleteView):
     model = Course
     context_object_name = 'course'
-    # template_name = 'certificates/course_delete.html'
     extra_context = {'title': 'Удаление курса'}
-    # form_class = CourseEditForm
     login_url = 'login'
 
     def form_valid(self, form):
@@ -246,15 +191,3 @@ class CourseDelete(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('course_list')
-
-
-class SettingsView(LoginRequiredMixin, PasswordChangeView):
-    template_name = 'certificates/settings.html'
-    success_url = reverse_lazy('settings')
-    extra_context = {'title': 'Настройки'}
-    form_class = UserSettingsForm
-    login_url = 'login'
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Изменения сохранены')
-        return super().form_valid(form)

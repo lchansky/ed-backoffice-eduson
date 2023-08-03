@@ -6,11 +6,11 @@ from .views import *
 urlpatterns = [
     path('', CertificateList.as_view(), name='home'),
     path('', CertificateList.as_view(), name='certificate_list'),
-    path('certificates/create', CertificateCreate.as_view(), name='certificate_create'),
-    path('certificates/<int:pk>', CertificateDetail.as_view(), name='certificate_detail'),
-    path('certificates/<int:pk>/edit', CertificateEdit.as_view(), name='certificate_edit'),
-    path('certificates/<int:pk>-<str:image_type>.png', certificate_image_view, name='certificate_image'),
-    path('certificates/download_all_info', certificate_download_all_info, name='certificate_download_all_info'),
+    path('create', CertificateCreate.as_view(), name='certificate_create'),
+    path('<int:pk>', CertificateDetail.as_view(), name='certificate_detail'),
+    path('<int:pk>/edit', CertificateEdit.as_view(), name='certificate_edit'),
+    path('<int:pk>-<str:image_type>.png', certificate_image_view, name='certificate_image'),
+    path('download_all_info', certificate_download_all_info, name='certificate_download_all_info'),
 
     path('courses', CourseList.as_view(), name='course_list'),
     path('courses/create', CourseCreate.as_view(), name='course_create'),
@@ -18,9 +18,5 @@ urlpatterns = [
     path('courses/<int:pk>/edit', CourseEdit.as_view(), name='course_edit'),
     path('courses/<int:pk>/delete', CourseDelete.as_view(), name='course_delete'),
 
-    path("login/", user_login, name="login"),
-    path('logout/', user_logout, name='logout'),
-    path('settings/', SettingsView.as_view(), name='settings'),
-
-    path('api/certificates/create_and_send_image', csrf_exempt(CertificateAPIView.as_view()))
+    path('api/create_and_send_image', csrf_exempt(CertificateAPIView.as_view()))
 ]
