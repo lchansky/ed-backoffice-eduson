@@ -63,14 +63,14 @@ class FeedChecker:
             raise ValueError('Перед проверкой нужно вызвать метод обработки данных self.process_values()')
 
         self.check_name("﻿Название курса (лендинги и amoCRM)")
-        # self.check_url_health_and_length("product_url", 2048)
-        # self.check_picture_size("picture_url")
+        self.check_url_health_and_length("product_url", 2048)
+        self.check_picture_size("picture_url")
         self.check_integer("Цена со скидкой")
         self.check_integer_or_empty("Полная цена")
         self.check_text_length("product_description", 3000)
 
         self.check_cluster("Кластер")
-        # self.check_url_health_and_length("Ссылка на программу", 35)
+        self.check_url_health_and_length("Ссылка на программу", 35)
         self.check_integer("product_enum")
         self.check_integer_or_empty("% скидки")
         self.check_cluster_number("category_id", "Кластер")

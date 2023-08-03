@@ -4,7 +4,6 @@ from django.views.decorators.csrf import csrf_exempt
 from .views import *
 
 urlpatterns = [
-    path('', CertificateList.as_view(), name='home'),
     path('', CertificateList.as_view(), name='certificate_list'),
     path('create', CertificateCreate.as_view(), name='certificate_create'),
     path('<int:pk>', CertificateDetail.as_view(), name='certificate_detail'),
