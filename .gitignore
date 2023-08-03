@@ -160,5 +160,5 @@ cython_debug/
 .idea/
 
 trash.py
-.env
 dev.env
+.staticfiles/
