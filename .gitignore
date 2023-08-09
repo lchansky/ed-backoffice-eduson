@@ -162,3 +162,4 @@ cython_debug/
 trash.py
 dev.env
 .staticfiles/
+/src/staticfiles/
