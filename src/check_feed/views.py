@@ -12,14 +12,11 @@ def upload_csv(request: WSGIRequest):
     if request.method == 'POST':
         form = CSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            # Get the uploaded file from the form
             csv_file = request.FILES['csv_file']
-            # сделать проверки и преобразование, потом выдать в словаре
             df = pd.read_csv(csv_file.file)
             fc = FeedChecker(df)
             fc.process_values()
             errors_data = fc.check()
-            # Return a response to indicate success
             messages.success(request, "CSV файл успешно проверен.")
             return render(
                 request,

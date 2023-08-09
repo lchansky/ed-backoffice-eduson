@@ -1,6 +1,7 @@
 from functools import wraps
 
 import pandas as pd
+from pandas._libs.missing import NAType
 from requests import RequestException
 
 from .utils import get_image_size_in_pixels, healthcheck_url
@@ -56,6 +57,8 @@ class FeedChecker:
     def process_values(self):
         self.df["% скидки"] *= 100
         self.df["% скидки"] = self.df["% скидки"].fillna(0).astype(int)
+        self.df = self.df.convert_dtypes(convert_floating=False)
+        self.df = self.df.applymap(lambda x: NAN if isinstance(x, NAType) else x)
         self.__is_processed = True
 
     def check(self):
@@ -82,6 +85,7 @@ class FeedChecker:
         self.check_not_empty("Категория (продукт)")
         self.check_not_empty_for_free_courses("Ссылка для входа", "Кластер")
         self.check_not_empty_for_free_courses("Ссылка регистрации", "Кластер")
+        self.check_price_of_free_courses("Цена со скидкой", "Кластер")
 
         self.__is_checked = True
 
@@ -114,21 +118,30 @@ class FeedChecker:
         """
         if not self.__is_checked:
             raise ValueError('Сначала нужно вызвать метод проверки данных self.check()')
-        errors = {}
+        errors = {
+            "Активные курсы": {},
+            "Архивные курсы": {},
+        }
         df = self.df.copy(deep=True)
         df = df.fillna(0)
         for idx, row in df.iterrows():
             cluster = row["Кластер"]
             product_name = row["﻿Название курса (лендинги и amoCRM)"]
+            is_archived = row["Архивный курс"]
             product_errors = {}
             for col, value in row.items():
                 if str(col).startswith('Проверка ') and value:
                     column_name = str(col).replace('Проверка ', '')
                     product_errors[column_name] = value
             if product_errors:
-                if not errors.get(cluster):
-                    errors[cluster] = []
-                errors[cluster].append(
+                if is_archived == 'Yes':
+                    key = "Архивные курсы"
+                else:
+                    key = "Активные курсы"
+
+                if not errors[key].get(cluster):
+                    errors[key][cluster] = []
+                errors[key][cluster].append(
                     {
                         "product_name": product_name,
                         "errors": product_errors,
@@ -289,6 +302,19 @@ class FeedChecker:
             else:
                 return NAN
         self.df[f"Проверка {column}"] = self.df[column].apply(check)
+
+    @check_column_exists
+    def check_price_of_free_courses(self, price_column: str, cluster_column: str):
+        new_column = []
+        for idx, row in self.df.iterrows():
+            cluster_name = row[cluster_column]
+            price = row[price_column]
+            if cluster_name == "Бесплатный курс" and (price != 0 or price != "0"):
+                new_column.append("Цена должна быть 0 для бесплатных курсов")
+            else:
+                new_column.append(NAN)
+
+        self.df[f"Проверка {price_column}"] = new_column
 
 
 def main():
