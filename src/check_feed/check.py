@@ -1,7 +1,7 @@
 from functools import wraps
 
 import pandas as pd
-from pandas._libs.missing import NAType
+# from pandas._libs.missing import NAType
 from requests import RequestException
 
 from .utils import get_image_size_in_pixels, healthcheck_url
@@ -57,8 +57,9 @@ class FeedChecker:
     def process_values(self):
         self.df["% скидки"] *= 100
         self.df["% скидки"] = self.df["% скидки"].fillna(0).astype(int)
-        self.df = self.df.convert_dtypes(convert_floating=False)
-        self.df = self.df.applymap(lambda x: NAN if isinstance(x, NAType) else x)
+        self.df["product_enum"] = self.df["product_enum"].fillna(0).astype(int)
+        # self.df = self.df.convert_dtypes(convert_floating=False)
+        # self.df = self.df.applymap(lambda x: NAN if isinstance(x, NAType) else x)
         self.__is_processed = True
 
     def check(self):
@@ -148,6 +149,26 @@ class FeedChecker:
                     }
                 )
         return errors
+
+    def get_df_with_amocrm_friendly_columns(self):
+        if not self.__is_processed:
+            raise ValueError(
+                'Перед преобразованием под AmoCRM, нужно вызвать метод обработки данных self.process_values()'
+            )
+
+        df = self.df.copy(deep=True)
+        new_columns = {
+            '﻿Название курса (лендинги и amoCRM)': 'Название',
+            'Полная цена': 'fake_price',
+            '% скидки': 'discount',
+            'product_enum': 'product_key',
+            'Цена со скидкой': 'real_price',
+            'В мес со скидкой': 'installment_price',
+            'Ссылка на программу': 'program_url',
+        }
+        df_renamed = df.rename(columns=new_columns)
+        return df_renamed
+
 
     @check_column_exists
     def check_cluster(self, column: str):

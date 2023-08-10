@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from .check import FeedChecker
-from .forms import CSVUploadForm
+from .forms import CSVUploadForm, CHECK_FILE_ERRORS, GET_FILE_FOR_UPDATE_PRICES
 
 
 def upload_csv(request: WSGIRequest):
@@ -16,13 +16,23 @@ def upload_csv(request: WSGIRequest):
             df = pd.read_csv(csv_file.file)
             fc = FeedChecker(df)
             fc.process_values()
-            errors_data = fc.check()
-            messages.success(request, "CSV файл успешно проверен.")
-            return render(
-                request,
-                'check_feed/show_check_report.html',
-                {'title': 'Отчет о проверке', 'errors_data': dict(errors_data)}
-            )
+            selected_action = form.cleaned_data['action']
+            if selected_action == CHECK_FILE_ERRORS:
+                errors_data = fc.check()
+                messages.success(request, "CSV файл успешно проверен.")
+                return render(
+                    request,
+                    'check_feed/show_check_report.html',
+                    {'title': 'Отчет о проверке', 'errors_data': dict(errors_data)}
+                )
+            elif selected_action == GET_FILE_FOR_UPDATE_PRICES:
+                df = fc.get_df_with_amocrm_friendly_columns()
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="amocrm_update_prices.csv"'
+                df.to_csv(path_or_buf=response, index=False)
+                messages.success(request, "CSV файл для обновления цен успешно сформирован.")
+                return response
+
     else:
         form = CSVUploadForm()
 
