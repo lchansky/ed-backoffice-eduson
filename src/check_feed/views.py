@@ -1,5 +1,6 @@
 import pandas as pd
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -8,6 +9,7 @@ from .check import FeedChecker
 from .forms import CSVUploadForm, CHECK_FILE_ERRORS, GET_FILE_FOR_UPDATE_PRICES
 
 
+@login_required(login_url='login')
 def upload_csv(request: WSGIRequest):
     if request.method == 'POST':
         form = CSVUploadForm(request.POST, request.FILES)
