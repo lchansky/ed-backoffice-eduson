@@ -58,6 +58,8 @@ class FeedChecker:
         self.df["% скидки"] *= 100
         self.df["% скидки"] = self.df["% скидки"].fillna(0).astype(int)
         self.df["product_enum"] = self.df["product_enum"].fillna(0).astype(int)
+        self.df["category_id"] = self.df["category_id"].fillna(0).astype(int)
+        self.df["is_active"] = self.df["is_active"].fillna(0).astype(int)
         # self.df = self.df.convert_dtypes(convert_floating=False)
         # self.df = self.df.applymap(lambda x: NAN if isinstance(x, NAType) else x)
         self.__is_processed = True
@@ -167,7 +169,15 @@ class FeedChecker:
             'Ссылка на программу': 'program_url',
         }
         df_renamed = df.rename(columns=new_columns)
-        return df_renamed
+
+        columns_to_keep = [
+            'Название', 'category_id', 'is_active', 'product_key', 'product_description',
+            'fake_price', 'real_price', 'discount', 'discount_amount', 'installment_price',
+            'product_url', 'program_url', 'demo_url', 'picture_url',
+            'duration_months', 'course_type',
+        ]
+        result_df = df_renamed[columns_to_keep]
+        return result_df
 
 
     @check_column_exists
