@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'certificates.apps.CertificatesConfig',
     'check_feed.apps.CheckFeedConfig',
+    'promocodes.apps.PromocodesConfig',
     'rest_framework',
 ]
 

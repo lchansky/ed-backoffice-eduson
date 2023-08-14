@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <hr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Название</th>
+                <th scope="col">Тип скидки</th>
+                <th scope="col">Размер скидки</th>
+                <th scope="col">Дата истечения</th>
+                <th scope="col">Активен</th>
+                <th scope="col">Дата создания</th>
+                <th scope="col">Дата изменения</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for promocode in promocodes %}
+                <tr>
+                    <td><a href="">{{ promocode.pk }}</a></td>
+                    <td>{{ promocode.get_type_display }}</td>
+                    <td>{{ promocode.discount }}</td>
+                    <td>{{ promocode.deadline|default:"-" }}</td>
+                    <td>{{ promocode.is_active|yesno:"✅,-" }}</td>
+                    <td>{{ promocode.created_at }}</td>
+                    <td>{{ promocode.updated_at }}</td>
+                </tr>
+            {% empty %}
+                Здесь ничего нет. Добавьте первое удостоверение!
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% load paginator_tags %}
+    {% get_proper_elided_page_range paginator page_obj.number as page_range %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% for i in page_range %}
+                {% if page_obj.number == i %}
+                    <li class="active page-item">
+                        <span class="page-link">{{ i }}</span>
+                    </li>
+                {% else %}
+                    {% if i == paginator.ELLIPSIS %}
+                        <li class="page-item">
+                            <span class="page-link">{{ paginator.ELLIPSIS }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+
+
+
+{% endblock %}
