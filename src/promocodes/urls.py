@@ -4,4 +4,5 @@ from .views import *
 
 urlpatterns = [
     path('', PromocodeList.as_view(), name='promocodes_home'),
+    path('', PromocodeList.as_view(), name='promocodes'),
 ]

@@ -8,6 +8,7 @@ from django.db.models import (
     FloatField,
     DO_NOTHING, DateField,
 )
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -21,7 +22,7 @@ class Promocode(Model):
         ('free_course', 'Бесплатный курс'),
     )
 
-    code = CharField(primary_key=True, max_length=50, unique=True, verbose_name='Промокод')
+    name = CharField(primary_key=True, max_length=50, unique=True, verbose_name='Промокод')
     type = CharField(max_length=50, verbose_name='Тип', choices=TYPE_CHOICES)
     discount = FloatField(verbose_name='Скидка', blank=True, null=True)
     deadline = DateField(verbose_name='Дата истечения', blank=True, null=True)
@@ -40,4 +41,7 @@ class Promocode(Model):
         ordering = ['pk']
 
     def __str__(self):
-        return self.code
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('promocode_detail', kwargs={'pk': self.pk})
