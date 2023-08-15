@@ -44,7 +44,7 @@
         <tbody>
             {% for promocode in promocodes %}
                 <tr>
-                    <td><a href="">{{ promocode.pk }}</a></td>
+                    <td><a href="{% url 'promocode_detail' promocode.pk %}">{{ promocode.pk }}</a></td>
                     <td>{{ promocode.get_type_display }}</td>
                     <td>{{ promocode.discount }}</td>
                     <td>{{ promocode.deadline|default:"-" }}</td>

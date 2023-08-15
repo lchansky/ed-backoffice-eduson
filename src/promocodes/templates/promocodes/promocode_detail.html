@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}
+🔠 {{ promocode.pk }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>🔠 {{ title }} {{ promocode.pk }}</h2>
+    <hr>
+    <style>
+        td {
+           width: 50%
+        }
+    </style>
+    <div class="list-group-item list-group-item text-start fs-4" style="max-width:600px;">
+        <table class="table" style="max-width:600px;">
+            <tbody>
+            <tr>
+                <td class="fs-5">Название</td>
+                <td class="fs-6">
+                    {{ promocode.name }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Тип скидки</td>
+                <td class="fs-6">
+                    {{ promocode.get_type_display }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Размер скидки</td>
+                <td class="fs-6">
+                    {{ promocode.discount }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Дата истечения</td>
+                <td class="fs-6">
+                    {{ promocode.deadline|default:"Бессрочный" }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Активен</td>
+                <td class="fs-6">
+                    {{ promocode.is_active|yesno:"✅,✖️" }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Дата создания</td>
+                <td class="fs-6">
+                    {{ promocode.created_at }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Дата изменения</td>
+                <td class="fs-6">
+                    {{ promocode.updated_at }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="hstack gap-3">
+            <a href="{% url 'promocode_edit' promocode.pk %}" class="col btn btn-outline-primary btn-lg">Редактировать</a>
+        </div>
+    </div>
+
+
+{% endblock %}
