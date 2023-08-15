@@ -7,6 +7,11 @@
 {% block content %}
     <h2>{{ title }}</h2>
     <hr>
+    <div class="btn-group" role="group" aria-label="Фильтры">
+      <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes_home' %}">Все</a>
+      <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes_home' %}?is_active=true">Активные</a>
+      <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes_home' %}?is_active=false">Не активные</a>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -26,12 +31,12 @@
                     <td>{{ promocode.get_type_display }}</td>
                     <td>{{ promocode.discount }}</td>
                     <td>{{ promocode.deadline|default:"-" }}</td>
-                    <td>{{ promocode.is_active|yesno:"✅,-" }}</td>
+                    <td>{{ promocode.is_active|yesno:"✅,✖️" }}</td>
                     <td>{{ promocode.created_at }}</td>
                     <td>{{ promocode.updated_at }}</td>
                 </tr>
             {% empty %}
-                Здесь ничего нет. Добавьте первое удостоверение!
+                Здесь ничего нет 😢
             {% endfor %}
         </tbody>
     </table>
@@ -52,7 +57,7 @@
                         </li>
                     {% else %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                            <a class="page-link" href="?page={{ i }}&{{ active_filters_query }}">{{ i }}</a>
                         </li>
                     {% endif %}
                 {% endif %}
