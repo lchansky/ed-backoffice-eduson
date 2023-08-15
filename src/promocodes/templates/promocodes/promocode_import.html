@@ -1,0 +1,16 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <form method="post" enctype="multipart/form-data" style="width: 600px; margin: 10px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p class="helptext">Необходимые колонки в таблице: name, type, discount, deadline</p>
+        <p><button type="submit" class="btn btn-primary btn-block">Импортировать</button></p>
+    </form>
+{% endblock %}

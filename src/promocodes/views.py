@@ -2,14 +2,16 @@ from copy import deepcopy
 from urllib.parse import urlencode
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView, FormView, DetailView, UpdateView, CreateView
 
-from .forms import PromocodeSearchForm, PromocodeCreateForm, PromocodeEditForm
+from .forms import PromocodeSearchForm, PromocodeCreateForm, PromocodeEditForm, PromocodesUploadForm
 from .models import Promocode
+from .utils import import_promocodes_from_xlsx, PromocodeImportException
 
 
 def home(request: WSGIRequest):
@@ -88,4 +90,28 @@ class PromocodeEdit(LoginRequiredMixin, UpdateView):
         form.instance.updated_by = self.request.user
         messages.success(self.request, 'Изменения сохранены')
         return super().form_valid(form)
+
+
+@login_required(login_url='login')
+def promocode_import_xlsx(request: WSGIRequest):
+    if request.method == 'POST':
+        form = PromocodesUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                import_promocodes_from_xlsx(request.FILES['file'], request.user)
+            except PromocodeImportException as exc:
+                messages.error(request, str(exc))
+                return redirect('promocode_import_xlsx')
+            else:
+                messages.success(request, "Промокоды успешно импортированы.")
+
+    else:
+        form = PromocodesUploadForm()
+
+    return render(
+        request,
+        'promocodes/promocode_import.html',
+        {'form': form, 'title': 'Импорт промокодов'}
+    )
+
 
