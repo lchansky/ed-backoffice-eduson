@@ -37,6 +37,7 @@ class Promocode(Model):
     class Meta:
         verbose_name = 'Промокод'
         verbose_name_plural = 'Промокоды'
+        ordering = ['pk']
 
     def __str__(self):
         return self.code
