@@ -39,6 +39,16 @@
                     </ul>
                 </li>
 
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        🔠 Промокоды
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'promocode_create' %}">➕ Добавить промокод</a></li>
+                        <li><a class="dropdown-item" href="{% url 'promocode_list' %}">📋 Список промокодов</a></li>
+                    </ul>
+                </li>
+
 
             </ul>
             {% if request.user.is_authenticated %}
