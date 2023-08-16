@@ -153,7 +153,7 @@ class PromocodeAPIView(APIView):
         except Promocode.DoesNotExist:
             promocode_request.response_status_code = 404
             promocode_request.save()
-            return Response({'error': 'Промокод не найден'}, status=404)
+            return Response({'status': '404', 'error': 'Промокод не найден'}, status=404)
 
         promocode_request.promocode_type = promocode.type
         promocode_request.promocode_discount = promocode.discount
@@ -162,7 +162,7 @@ class PromocodeAPIView(APIView):
         if not promocode.is_active:
             promocode_request.response_status_code = 404
             promocode_request.save()
-            return Response({'error': 'Промокод не найден'}, status=404)
+            return Response({'status': '404', 'error': 'Промокод не найден'}, status=404)
 
         if not promocode.deadline or promocode.deadline >= datetime.date.today():
             serializer = PromocodeSerializer(promocode)
@@ -172,4 +172,4 @@ class PromocodeAPIView(APIView):
         else:
             promocode_request.response_status_code = 201
             promocode_request.save()
-            return Response({'error': 'Срок действия промокода истек'}, status=201)
+            return Response({'status': '201', 'error': 'Срок действия промокода истек'}, status=201)
