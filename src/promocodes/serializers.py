@@ -9,7 +9,8 @@ class PromocodeSerializer(serializers.ModelSerializer):
         model = Promocode
         fields = ('name', 'type', 'discount', 'deadline')
 
+    @property
     def data(self):
-        data = super().data()
+        data = super().data
         data['status'] = '200'
         return data
