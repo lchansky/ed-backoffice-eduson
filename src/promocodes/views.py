@@ -1,10 +1,14 @@
+import datetime
+import io
 from copy import deepcopy
 from urllib.parse import urlencode
 
+import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView, FormView, DetailView, UpdateView, CreateView
@@ -113,5 +117,23 @@ def promocode_import_xlsx(request: WSGIRequest):
         'promocodes/promocode_import.html',
         {'form': form, 'title': 'Импорт промокодов'}
     )
+
+
+@login_required(login_url='login')
+def promocode_export_xlsx(request: WSGIRequest):
+    certificates = Promocode.objects.all().values()
+
+    df = pd.DataFrame(certificates)
+    df['deadline'] = df['deadline'].apply(lambda x: x.strftime('%d.%m.%Y') if x else None)
+    df['created_at'] = df['created_at'].apply(lambda x: x.strftime('%d.%m.%Y') if x else None)
+    df['updated_at'] = df['updated_at'].apply(lambda x: x.strftime('%d.%m.%Y') if x else None)
+    buffer = io.BytesIO()
+    with pd.ExcelWriter(buffer) as writer:
+        df.to_excel(writer, index=False)
+
+    date = datetime.date.today()
+    response = HttpResponse(buffer.getvalue(), content_type="application/vnd.ms-excel")
+    response['Content-Disposition'] = f'inline; filename=Выгрузка всех промокодов {date}.xlsx'
+    return response
 
 
