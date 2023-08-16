@@ -45,3 +45,18 @@ class Promocode(Model):
 
     def get_absolute_url(self):
         return reverse('promocode_detail', kwargs={'pk': self.pk})
+
+
+class PromocodeRequest(Model):
+    dt = DateTimeField(auto_now_add=True, verbose_name='Дата и время запроса')
+    uuid = CharField(max_length=50, verbose_name='UUID', blank=True, null=True)
+
+    promocode_name = CharField(max_length=50, verbose_name='Промокод')
+    promocode_type = CharField(max_length=50, verbose_name='Тип промокода', blank=True, null=True)
+    promocode_discount = FloatField(verbose_name='Скидка промокода', blank=True, null=True)
+    promocode_deadline = DateField(verbose_name='Дата истечения промокода', blank=True, null=True)
+
+    response_status_code = CharField(max_length=50, verbose_name='Код ответа', blank=True, null=True)
+
+    def __str__(self):
+        return f'Запрос промокода {self.dt}, промокод {self.promocode_name}, UUID {self.uuid}'

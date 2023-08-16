@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .forms import PromocodeSearchForm, PromocodeCreateForm, PromocodeEditForm, PromocodesUploadForm
-from .models import Promocode
+from .models import Promocode, PromocodeRequest
 from .serializers import PromocodeSerializer
 from .utils import import_promocodes_from_xlsx, PromocodeImportException
 
@@ -146,15 +146,30 @@ def promocode_export_xlsx(request: WSGIRequest):
 class PromocodeAPIView(APIView):
     def get(self, request):
         name = request.query_params.get('name', '')
+        uuid = request.query_params.get('uuid', '')
+        promocode_request = PromocodeRequest(promocode_name=name, uuid=uuid)
         try:
-            promocode = Promocode.objects.get(pk=name, is_active=True)
+            promocode = Promocode.objects.get(pk=name)
         except Promocode.DoesNotExist:
+            promocode_request.response_status_code = 404
+            promocode_request.save()
+            return Response({'error': 'Промокод не найден'}, status=404)
+
+        promocode_request.promocode_type = promocode.type
+        promocode_request.promocode_discount = promocode.discount
+        promocode_request.promocode_deadline = promocode.deadline
+
+        if not promocode.is_active:
+            promocode_request.response_status_code = 404
+            promocode_request.save()
             return Response({'error': 'Промокод не найден'}, status=404)
 
         if not promocode.deadline or promocode.deadline >= datetime.date.today():
             serializer = PromocodeSerializer(promocode)
+            promocode_request.response_status_code = 200
+            promocode_request.save()
             return Response(serializer.data, status=200)
         else:
+            promocode_request.response_status_code = 201
+            promocode_request.save()
             return Response({'error': 'Срок действия промокода истек'}, status=201)
-
-
