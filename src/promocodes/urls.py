@@ -10,4 +10,6 @@ urlpatterns = [
     path('edit/<str:pk>', PromocodeEdit.as_view(), name='promocode_edit'),
     path('import_xlsx', promocode_import_xlsx, name='promocode_import_xlsx'),
     path('export_xlsx', promocode_export_xlsx, name='promocode_export_xlsx'),
+
+    path('api/', csrf_exempt(PromocodeAPIView.as_view())),
 ]

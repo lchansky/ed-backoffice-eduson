@@ -11,10 +11,15 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, FormView, DetailView, UpdateView, CreateView
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .forms import PromocodeSearchForm, PromocodeCreateForm, PromocodeEditForm, PromocodesUploadForm
 from .models import Promocode
+from .serializers import PromocodeSerializer
 from .utils import import_promocodes_from_xlsx, PromocodeImportException
 
 
@@ -135,5 +140,21 @@ def promocode_export_xlsx(request: WSGIRequest):
     response = HttpResponse(buffer.getvalue(), content_type="application/vnd.ms-excel")
     response['Content-Disposition'] = f'inline; filename=Выгрузка всех промокодов {date}.xlsx'
     return response
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class PromocodeAPIView(APIView):
+    def get(self, request):
+        name = request.query_params.get('name', '')
+        try:
+            promocode = Promocode.objects.get(pk=name, is_active=True)
+        except Promocode.DoesNotExist:
+            return Response({'error': 'Промокод не найден'}, status=404)
+
+        if not promocode.deadline or promocode.deadline >= datetime.date.today():
+            serializer = PromocodeSerializer(promocode)
+            return Response(serializer.data, status=200)
+        else:
+            return Response({'error': 'Срок действия промокода истек'}, status=201)
 
 
