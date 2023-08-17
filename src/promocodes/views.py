@@ -126,9 +126,9 @@ def promocode_import_xlsx(request: WSGIRequest):
 
 @login_required(login_url='login')
 def promocode_export_xlsx(request: WSGIRequest):
-    certificates = Promocode.objects.all().values()
+    promocodes = Promocode.objects.all().values()
 
-    df = pd.DataFrame(certificates)
+    df = pd.DataFrame(promocodes)
     df['deadline'] = df['deadline'].apply(lambda x: x.strftime('%d.%m.%Y') if x else None)
     df['created_at'] = df['created_at'].apply(lambda x: x.strftime('%d.%m.%Y') if x else None)
     df['updated_at'] = df['updated_at'].apply(lambda x: x.strftime('%d.%m.%Y') if x else None)
@@ -138,7 +138,7 @@ def promocode_export_xlsx(request: WSGIRequest):
 
     date = datetime.date.today()
     response = HttpResponse(buffer.getvalue(), content_type="application/vnd.ms-excel")
-    response['Content-Disposition'] = f'inline; filename=Выгрузка всех промокодов {date}.xlsx'
+    response['Content-Disposition'] = f'attachment; filename=Выгрузка всех промокодов {date}.xlsx'
     return response
 
 

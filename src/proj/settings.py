@@ -27,11 +27,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'main.apps.MainConfig',
     'certificates.apps.CertificatesConfig',
     'check_feed.apps.CheckFeedConfig',
     'promocodes.apps.PromocodesConfig',
+
     'rest_framework',
+    'rangefilter',
 ]
 
 MIDDLEWARE = [
