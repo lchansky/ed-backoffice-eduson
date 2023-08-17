@@ -51,6 +51,7 @@
                     <td>{{ promocode.is_active|yesno:"✅,✖️" }}</td>
                     <td>{{ promocode.created_at }}</td>
                     <td>{{ promocode.updated_at }}</td>
+                    <td><a href="{% url 'promocode_edit' promocode.pk %}">✏️</a></td>
                 </tr>
             {% empty %}
                 Здесь ничего нет 😢
