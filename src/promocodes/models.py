@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth import get_user_model
 from django.db.models import (
     Model,
@@ -45,6 +47,12 @@ class Promocode(Model):
 
     def get_absolute_url(self):
         return reverse('promocode_detail', kwargs={'pk': self.pk})
+
+    @property
+    def is_expired(self):
+        if self.deadline and self.deadline < datetime.date.today():
+            return True
+        return False
 
 
 class PromocodeRequest(Model):
