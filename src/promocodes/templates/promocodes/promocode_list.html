@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>
+        {% if request.GET.name %}
+            Промокоды по запросу "{{ request.GET.name }}"
+        {% else %}
+            {{ title }}
+        {% endif %}
+    </h2>
+    <hr>
+    <form action="{% url 'promocodes' %}" method="post" style="max-width: 700px;" class="row g-3">
+        {% csrf_token %}
+        <div class="col-auto btn-group" role="group" aria-label="Фильтры">
+          <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes' %}">Все</a>
+          <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes' %}?is_active=true">Активные</a>
+          <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes' %}?is_active=false">Не активные</a>
+        </div>
+        <div class="col-auto">
+            {{ form.name }}
+            {{ form.name.errors }}
+            {{ form.name.help_text }}
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-primary">Поиск</button>
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Название</th>
+                <th scope="col">Тип скидки</th>
+                <th scope="col">Размер скидки</th>
+                <th scope="col">Дата истечения</th>
+                <th scope="col">Активен</th>
+                <th scope="col">Дата создания</th>
+                <th scope="col">Дата изменения</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for promocode in promocodes %}
+                <tr>
+                    <td><a href="{% url 'promocode_detail' promocode.pk %}">{{ promocode.pk }}</a></td>
+                    <td>{{ promocode.get_type_display }}</td>
+                    <td>{{ promocode.discount }}</td>
+                    {% if promocode.is_expired %}
+                        <td style="color: #BF4545;">{{ promocode.deadline|default:"-" }}</td>
+                    {% else %}
+                        <td>{{ promocode.deadline|default:"-" }}</td>
+                    {% endif %}
+                    <td>{{ promocode.is_active|yesno:"✅,✖️" }}</td>
+                    <td>{{ promocode.created_at }}</td>
+                    <td>{{ promocode.updated_at }}</td>
+                    <td><a href="{% url 'promocode_edit' promocode.pk %}">✏️</a></td>
+                </tr>
+            {% empty %}
+                Здесь ничего нет 😢
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% load paginator_tags %}
+    {% get_proper_elided_page_range paginator page_obj.number as page_range %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% for i in page_range %}
+                {% if page_obj.number == i %}
+                    <li class="active page-item">
+                        <span class="page-link">{{ i }}</span>
+                    </li>
+                {% else %}
+                    {% if i == paginator.ELLIPSIS %}
+                        <li class="page-item">
+                            <span class="page-link">{{ paginator.ELLIPSIS }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}&{{ active_filters_query }}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+
+
+
+{% endblock %}

@@ -39,28 +39,39 @@
                     </ul>
                 </li>
 
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        🔠 Промокоды
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'promocode_create' %}">➕ Добавить промокод</a></li>
+                        <li><a class="dropdown-item" href="{% url 'promocode_list' %}">📋 Список промокодов</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'promocode_import_xlsx' %}">📋 Импорт промокодов</a></li>
+                        <li><a class="dropdown-item" href="{% url 'promocode_export_xlsx' %}">💾 Скачать все промокоды (xlsx)</a></li>
+                    </ul>
+                </li>
+
 
             </ul>
             {% if request.user.is_authenticated %}
-
-            <span class="navbar-text">
-                <div class="hstack gap-3">
-                    <div class="fs-6">
-                        Добро пожаловать, {{ user.username }}.
+                <span class="navbar-text">
+                    <div class="hstack gap-3">
+                        <div class="fs-6">
+                            Добро пожаловать, {{ user.username }}.
+                        </div>
+                        <div class="vr"></div>
+                        <a class="nav-link" href="{% url 'settings' %}"><span class="navbar-text">Настройки</span></a>
+                        <div class="vr"></div>
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger">Выход</a>
                     </div>
-                    <div class="vr"></div>
-                    <a class="nav-link" href="{% url 'settings' %}"><span class="navbar-text">Настройки</span></a>
-                    <div class="vr"></div>
-                    <a href="{% url 'logout' %}" class="btn btn-outline-danger">Выход</a>
-                </div>
-            </span>
+                </span>
             {% else %}
-
-            <span class="navbar-text">
-                <div class="hstack gap-3">
-                    <a href="{% url 'login' %}" class="btn btn-outline-secondary">Вход</a>
-                </div>
-            </span>
+                <span class="navbar-text">
+                    <div class="hstack gap-3">
+                        <a href="{% url 'login' %}" class="btn btn-outline-secondary">Вход</a>
+                    </div>
+                </span>
             {% endif %}
         </div>
     </div>
