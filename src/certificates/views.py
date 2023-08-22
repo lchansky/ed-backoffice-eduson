@@ -17,10 +17,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from telebot import TeleBot
 
-from .forms import CertificateCreateForm, CertificateEditForm, CourseCreateForm, CourseEditForm
-from .images import CertificateImageGenerator
-from .models import Certificate, Course
-from .serializers import CertificateSerializer
+from certificates.forms import CertificateCreateForm, CertificateEditForm, CourseCreateForm, CourseEditForm
+from certificates.images import CertificateImageGenerator
+from certificates.models import Certificate, Course
+from certificates.serializers import CertificateSerializer
 
 
 class CertificateList(LoginRequiredMixin, ListView):

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import CharField
 
-from .models import Certificate, Course
+from certificates.models import Certificate, Course
 
 
 class CertificateSerializer(serializers.ModelSerializer):

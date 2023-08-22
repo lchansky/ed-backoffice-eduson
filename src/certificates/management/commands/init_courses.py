@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         import pandas as pd
-        from ...models import Course
+        from certificates.models import Course
         courses = Course.objects.all()
         if not courses:
             df = pd.read_csv('courses.csv')

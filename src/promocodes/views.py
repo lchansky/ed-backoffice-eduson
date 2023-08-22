@@ -17,10 +17,11 @@ from django.views.generic import ListView, FormView, DetailView, UpdateView, Cre
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .forms import PromocodeSearchForm, PromocodeCreateForm, PromocodeEditForm, PromocodesUploadForm
-from .models import Promocode, PromocodeRequest
-from .serializers import PromocodeSerializer
-from .utils import import_promocodes_from_xlsx, PromocodeImportException
+from mixins.permission_required import PermissionRequiredMixin
+from promocodes.forms import PromocodeSearchForm, PromocodeCreateForm, PromocodeEditForm, PromocodesUploadForm
+from promocodes.models import Promocode, PromocodeRequest
+from promocodes.serializers import PromocodeSerializer
+from promocodes.utils import import_promocodes_from_xlsx, PromocodeImportException
 
 
 def home(request: WSGIRequest):

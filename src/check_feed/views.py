@@ -5,8 +5,8 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .check import FeedChecker
-from .forms import CSVUploadForm, CHECK_FILE_ERRORS, GET_FILE_FOR_UPDATE_PRICES
+from check_feed.check import FeedChecker
+from check_feed.forms import CSVUploadForm, CHECK_FILE_ERRORS, GET_FILE_FOR_UPDATE_PRICES
 
 
 @login_required(login_url='login')

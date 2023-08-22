@@ -1,6 +1,6 @@
 from django.forms import ModelForm, TextInput, DateInput, NumberInput, Select
 
-from .models import Certificate, Course
+from certificates.models import Certificate, Course
 
 
 class CertificateCreateForm(ModelForm):

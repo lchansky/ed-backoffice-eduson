@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 from django.db import IntegrityError
 
-from .models import Promocode
+from promocodes.models import Promocode
 
 
 class PromocodeImportException(Exception):

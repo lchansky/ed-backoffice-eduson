@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import *
+from promocodes.views import *
 
 urlpatterns = [
     path('', PromocodeList.as_view(), name='promocodes'),

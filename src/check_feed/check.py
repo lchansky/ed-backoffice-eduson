@@ -1,10 +1,9 @@
 from functools import wraps
 
 import pandas as pd
-# from pandas._libs.missing import NAType
 from requests import RequestException
 
-from .utils import get_image_size_in_pixels, healthcheck_url
+from check_feed.utils import get_image_size_in_pixels, healthcheck_url
 
 NAN = float('nan')
 CLUSTERS = [

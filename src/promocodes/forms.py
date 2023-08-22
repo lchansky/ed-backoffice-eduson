@@ -1,7 +1,7 @@
 from django.forms import Form, CharField, ModelForm, FileField
 from django.forms.widgets import TextInput, Select, DateInput, NumberInput, CheckboxInput, FileInput
 
-from .models import Promocode
+from promocodes.models import Promocode
 
 
 class PromocodeSearchForm(Form):

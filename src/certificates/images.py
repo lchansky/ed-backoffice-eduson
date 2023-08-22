@@ -1,14 +1,12 @@
-
 import io
 from io import BytesIO
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
-
-from .models import Certificate
 from django.conf import settings
 
-from .utils import numeral_noun_declension
+from certificates.models import Certificate
+from certificates.utils import numeral_noun_declension
 
 BASE_DIR = settings.BASE_DIR
 BASE_MEDIA_DIR = BASE_DIR / 'certificates' / 'media'

@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.http import HttpResponse
 from rangefilter.filters import DateTimeRangeFilterBuilder
 
-from .models import Promocode, PromocodeRequest
+from promocodes.models import Promocode, PromocodeRequest
 
 
 class PromocodeAdmin(admin.ModelAdmin):

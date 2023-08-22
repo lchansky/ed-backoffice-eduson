@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from .forms import UserSettingsForm, UserLoginForm
+from main.forms import UserSettingsForm, UserLoginForm
 
 
 class MainPage(LoginRequiredMixin, TemplateView):
