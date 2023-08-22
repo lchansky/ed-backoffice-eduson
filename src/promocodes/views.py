@@ -88,13 +88,14 @@ class PromocodeCreate(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PromocodeEdit(LoginRequiredMixin, UpdateView):
+class PromocodeEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Promocode
     context_object_name = 'promocode'
     template_name = 'promocodes/promocode_edit.html'
     extra_context = {'title': 'Редактирование промокода'}
     form_class = PromocodeEditForm
     login_url = 'login'
+    permission_required = 'promocodes.change_promocode'
 
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
