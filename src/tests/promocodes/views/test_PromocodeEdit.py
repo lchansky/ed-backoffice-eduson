@@ -74,5 +74,5 @@ def test_edit_promocode_without_permission():
     promocode.refresh_from_db()
 
     assert response.status_code == 302
-    assert response.url == reverse(PermissionRequiredMixin.permission_denied_redirect)
+    assert response.url == reverse('promocode_list')
     assert promocode.type == 'additional_discount'

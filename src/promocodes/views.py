@@ -96,6 +96,8 @@ class PromocodeEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     form_class = PromocodeEditForm
     login_url = 'login'
     permission_required = 'promocodes.change_promocode'
+    permission_denied_redirect = 'promocode_list'
+    permission_denied_message = 'У вас нет прав для редактирования промокода'
 
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
