@@ -21,6 +21,7 @@ from certificates.forms import CertificateCreateForm, CertificateEditForm, Cours
 from certificates.images import CertificateImageGenerator
 from certificates.models import Certificate, Course
 from certificates.serializers import CertificateSerializer
+from mixins.permission_required import PermissionRequiredMixin
 
 
 class CertificateList(LoginRequiredMixin, ListView):
@@ -39,13 +40,16 @@ class CertificateDetail(LoginRequiredMixin, DetailView):
     login_url = 'login'
 
 
-class CertificateCreate(LoginRequiredMixin, CreateView):
+class CertificateCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Certificate
     template_name = 'certificates/certificate_create.html'
     context_object_name = 'certificate'
     form_class = CertificateCreateForm
     extra_context = {'title': 'Добавление удостоверения'}
     login_url = 'login'
+    permission_required = 'certificates.add_certificate'
+    permission_denied_message = 'У вас нет прав для добавления удостоверений'
+    permission_denied_redirect = 'certificate_list'
 
     def form_valid(self, form):
         messages.success(
