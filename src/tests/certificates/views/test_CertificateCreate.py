@@ -1,7 +1,7 @@
 import datetime
 
 import pytest
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission
 from django.test import Client
 from django.urls import reverse
 
@@ -25,7 +25,7 @@ def test_create_certificate_with_permission(user, course):
     assert user.get_all_permissions()
     assert user.has_perm(f'{permission.content_type.app_label}.add_certificate')
 
-    c.login(username=user.username, password=user.password)
+    assert c.login(username='user', password='password')
 
     certificate_create_endpoint = reverse("certificate_create")
     response = c.post(
@@ -47,7 +47,7 @@ def test_create_certificate_with_permission(user, course):
 def test_edit_certificate_without_permission(user, course):
     c = Client()
 
-    c.login(username='john', password='glass onion')  # TODO: user.username, user.password
+    c.login(username='user', password='password')  # TODO: user.username, user.password
 
     certificate_create_endpoint = reverse("certificate_create")
     response = c.post(

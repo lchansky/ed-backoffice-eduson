@@ -1,20 +1,16 @@
 import pytest
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission
 from django.test import Client
 from django.urls import reverse
 
-from mixins.permission_required import PermissionRequiredMixin
+from tests.conftest import user
 from promocodes.models import Promocode
 
 
 @pytest.mark.django_db
-def test_edit_promocode_with_permission():
+def test_edit_promocode_with_permission(user):
     c = Client()
-    user = User.objects.create_user(
-        username='john',
-        email='jlennon@beatles.com',
-        password='glass onion',
-    )
+
     permission = Permission.objects.get(codename='change_promocode')
     user.user_permissions.add(permission)
     user.save()
@@ -22,7 +18,7 @@ def test_edit_promocode_with_permission():
     assert user.get_all_permissions()
     assert user.has_perm(f'{permission.content_type.app_label}.change_promocode')
 
-    c.login(username='john', password='glass onion')
+    c.login(username='user', password='password')
 
     promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount')
 
@@ -46,17 +42,12 @@ def test_edit_promocode_with_permission():
 
 
 @pytest.mark.django_db
-def test_edit_promocode_without_permission():
+def test_edit_promocode_without_permission(user):
     c = Client()
-    user = User.objects.create_user(
-        username='john',
-        email='jlennon@beatles.com',
-        password='glass onion',
-    )
 
     assert not user.get_all_permissions()
 
-    c.login(username='john', password='glass onion')
+    c.login(username='user', password='password')
 
     promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount')
 

@@ -7,8 +7,8 @@ import pytest
 def user():
 
     user = User.objects.create_user(
-        username='john',
+        username='user',
         email='jlennon@beatles.com',
-        password='glass onion',
+        password='password',
     )
     return user
