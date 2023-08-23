@@ -37,14 +37,13 @@
                 <th scope="col">Размер скидки</th>
                 <th scope="col">Дата истечения</th>
                 <th scope="col">Активен</th>
-                <th scope="col">Дата создания</th>
                 <th scope="col">Дата изменения</th>
             </tr>
         </thead>
         <tbody>
             {% for promocode in promocodes %}
                 <tr>
-                    <td><a href="{% url 'promocode_detail' promocode.pk %}">{{ promocode.pk }}</a></td>
+                    <td><a href="{% url 'promocode_detail' promocode.pk %}">{{ promocode.name }}</a></td>
                     <td>{{ promocode.get_type_display }}</td>
                     <td>{{ promocode.discount }}</td>
                     {% if promocode.is_expired %}
@@ -53,7 +52,6 @@
                         <td>{{ promocode.deadline|default:"-" }}</td>
                     {% endif %}
                     <td>{{ promocode.is_active|yesno:"✅,✖️" }}</td>
-                    <td>{{ promocode.created_at }}</td>
                     <td>{{ promocode.updated_at }}</td>
                     <td><a href="{% url 'promocode_edit' promocode.pk %}">✏️</a></td>
                 </tr>

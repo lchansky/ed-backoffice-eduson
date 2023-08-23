@@ -10,13 +10,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='promocode',
-            options={'ordering': ['pk'], 'verbose_name': 'Промокод', 'verbose_name_plural': 'Промокоды'},
-        ),
         migrations.RenameField(
             model_name='promocode',
             old_name='code',
             new_name='name',
+        ),
+        migrations.AlterModelOptions(
+            name='promocode',
+            options={'ordering': ['name'], 'verbose_name': 'Промокод', 'verbose_name_plural': 'Промокоды'},
         ),
     ]

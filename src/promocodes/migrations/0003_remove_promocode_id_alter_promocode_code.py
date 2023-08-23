@@ -10,13 +10,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='promocode',
-            name='id',
-        ),
-        migrations.AlterField(
-            model_name='promocode',
-            name='code',
-            field=models.CharField(max_length=50, primary_key=True, serialize=False, unique=True, verbose_name='Промокод'),
-        ),
+        # migrations.RemoveField(
+        #     model_name='promocode',
+        #     name='id',
+        # ),
+        # migrations.AlterField(
+        #     model_name='promocode',
+        #     name='code',
+        #     field=models.CharField(max_length=50, primary_key=True, serialize=False, unique=True, verbose_name='Промокод'),
+        # ),
     ]

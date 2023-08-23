@@ -153,7 +153,7 @@ class PromocodeAPIView(APIView):
         uuid = request.query_params.get('uuid', '')
         promocode_request = PromocodeRequest(promocode_name=name, uuid=uuid)
         try:
-            promocode = Promocode.objects.get(pk=name)
+            promocode = Promocode.objects.get(name=name)
         except Promocode.DoesNotExist:
             promocode_request.response_status_code = 404
             promocode_request.save()

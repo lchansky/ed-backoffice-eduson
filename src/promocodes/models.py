@@ -24,7 +24,7 @@ class Promocode(Model):
         ('free_course', 'Бесплатный курс'),
     )
 
-    name = CharField(primary_key=True, max_length=50, unique=True, verbose_name='Промокод')
+    name = CharField(max_length=50, unique=True, verbose_name='Название')
     type = CharField(max_length=50, verbose_name='Тип', choices=TYPE_CHOICES)
     discount = FloatField(verbose_name='Скидка', blank=True, null=True)
     deadline = DateField(verbose_name='Дата истечения', blank=True, null=True)
@@ -40,7 +40,7 @@ class Promocode(Model):
     class Meta:
         verbose_name = 'Промокод'
         verbose_name_plural = 'Промокоды'
-        ordering = ['pk']
+        ordering = ['name']
 
     def __str__(self):
         return self.name
