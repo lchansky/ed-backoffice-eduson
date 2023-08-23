@@ -47,7 +47,7 @@ def test_create_certificate_with_permission(user, course):
 def test_edit_certificate_without_permission(user, course):
     c = Client()
 
-    c.login(username='user', password='password')  # TODO: user.username, user.password
+    c.login(username='user', password='password')
 
     certificate_create_endpoint = reverse("certificate_create")
     response = c.post(
