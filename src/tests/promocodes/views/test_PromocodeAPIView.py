@@ -84,4 +84,4 @@ def test_inactive_promocode():
 
     response = c.get(api_endpoint, {"name": promocode.name})
 
-    assert response.status_code == 404
+    assert response.status_code == 201

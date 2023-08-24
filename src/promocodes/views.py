@@ -164,9 +164,9 @@ class PromocodeAPIView(APIView):
         promocode_request.promocode_deadline = promocode.deadline
 
         if not promocode.is_active:
-            promocode_request.response_status_code = 404
+            promocode_request.response_status_code = 201
             promocode_request.save()
-            return Response({'status': '404', 'error': 'Промокод не найден'}, status=404)
+            return Response({'status': '201', 'error': 'Промокод не активен'}, status=201)
 
         if not promocode.is_expired:
             serializer = PromocodeSerializer(promocode)
