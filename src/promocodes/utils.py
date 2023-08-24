@@ -50,14 +50,21 @@ def import_promocodes_from_xlsx(file, user):
                 name=row['name'],
                 type=row['type'],
                 discount=row['discount'],
+                course_title=None if pd.isna(row['course_title']) else row['course_title'],
                 deadline=deadline,
                 created_by=user,
                 updated_by=user,
             )
-        except Exception as exc:
+            if promocode.type == 'free_course' and not promocode.course_title:
+                raise PromocodeImportException(
+                    f"Не удалось импортировать промокоды. "
+                    f"Для промокодов с типом 'Бесплатный курс' (free_course) "
+                    f"необходимо указать название курса (course_title)"
+                )
+        except KeyError as exc:
             raise PromocodeImportException(
                 f"Не удалось импортировать промокоды. "
-                f"Убедитесь, что колонки имеют такие названия: 'name', 'type', 'discount', 'deadline'."
+                f"Убедитесь, что колонки имеют такие названия: 'name', 'type', 'discount', 'deadline', 'course_title'."
             )
         promocodes_to_create.append(promocode)
     try:

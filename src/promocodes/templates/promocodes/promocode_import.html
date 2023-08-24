@@ -10,7 +10,7 @@
     <form method="post" enctype="multipart/form-data" style="width: 600px; margin: 10px;">
         {% csrf_token %}
         {{ form.as_p }}
-        <p class="helptext">Необходимые колонки в таблице: name, type, discount, deadline</p>
+        <p class="helptext">Необходимые колонки в таблице: name, type, discount, deadline, course_title</p>
         <p><button type="submit" class="btn btn-primary btn-block">Импортировать</button></p>
     </form>
 {% endblock %}
