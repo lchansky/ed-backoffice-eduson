@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <h2>🔠 {{ title }} {{ promocode.pk }}</h2>
+    <h2>🔠 {{ title }} {{ promocode.name }}</h2>
     <form action="{% url 'promocode_edit' promocode.pk %}" method="post" class="text-start" style="max-width:600px;">
 
         {% csrf_token %}
