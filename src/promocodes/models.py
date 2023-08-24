@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db.models import (
     Model,
     CharField,
@@ -44,6 +45,16 @@ class Promocode(Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.pk:
+            old_name = self.__class__.objects.get(pk=self.pk).name
+            if old_name != self.name:
+                raise ValidationError(
+                    "Запрещено изменять название промокода. "
+                    "Создайте новый промокод, если хотите изменить название."
+                )
+        super().save(force_insert, force_update, using, update_fields)
 
     def get_absolute_url(self):
         return reverse('promocode_detail', kwargs={'pk': self.pk})

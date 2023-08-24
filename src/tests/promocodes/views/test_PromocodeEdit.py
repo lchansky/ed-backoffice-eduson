@@ -8,6 +8,37 @@ from promocodes.models import Promocode
 
 
 @pytest.mark.django_db
+def test_cant_edit_promocode_name(user):
+    c = Client()
+
+    permission = Permission.objects.get(codename='change_promocode')
+    user.user_permissions.add(permission)
+    user.save()
+
+    assert user.get_all_permissions()
+    assert user.has_perm(f'{permission.content_type.app_label}.change_promocode')
+
+    c.login(username='user', password='password')
+
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount')
+
+    promocode_edit_endpoint = reverse("promocode_edit", args=(promocode.pk,))
+    response = c.post(
+        promocode_edit_endpoint,
+        data={
+            'type': promocode.type,
+            'name': 'PROMOCODE EDITED NAME',
+            'discount': promocode.discount if promocode.discount else '',
+            'deadline': promocode.deadline if promocode.deadline else '',
+            'is_active': promocode.is_active,
+        },
+    )
+    promocode.refresh_from_db()
+
+    assert promocode.name == 'PROMOCODE'
+
+
+@pytest.mark.django_db
 def test_edit_promocode_with_permission(user):
     c = Client()
 
