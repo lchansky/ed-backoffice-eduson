@@ -13,4 +13,6 @@ class PromocodeSerializer(serializers.ModelSerializer):
     def data(self):
         data = super().data
         data['status'] = '200'
+        if self.instance.type == 'free_course':
+            data['course_title'] = self.instance.course_title
         return data

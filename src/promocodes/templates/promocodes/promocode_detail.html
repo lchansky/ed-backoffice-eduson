@@ -27,6 +27,14 @@
                     {{ promocode.get_type_display }}
                 </td>
             </tr>
+            {% if promocode.type == 'free_course' %}
+                <tr>
+                    <td class="fs-5">Название курса</td>
+                    <td class="fs-6">
+                        {{ promocode.course_title }}
+                    </td>
+                </tr>
+            {% endif %}
             <tr>
                 <td class="fs-5">Размер скидки</td>
                 <td class="fs-6">

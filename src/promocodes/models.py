@@ -9,7 +9,9 @@ from django.db.models import (
     DateTimeField,
     ForeignKey,
     FloatField,
-    DO_NOTHING, DateField,
+    DO_NOTHING,
+    DateField,
+    IntegerField,
 )
 from django.urls import reverse
 
@@ -31,6 +33,8 @@ class Promocode(Model):
     deadline = DateField(verbose_name='Дата истечения', blank=True, null=True)
     is_active = BooleanField(default=True, verbose_name='Активен')
 
+    course_title = CharField(max_length=200, verbose_name='Название курса', blank=True, null=True)
+
     created_at = DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = DateTimeField(auto_now=True, verbose_name='Дата изменения')
     created_by = ForeignKey(User, on_delete=DO_NOTHING, blank=True, null=True,
@@ -47,6 +51,10 @@ class Promocode(Model):
         return self.name
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.type == 'free_course' and not self.course_title:
+            raise ValidationError(
+                "Для промокода с типом 'Бесплатный курс' необходимо указать название курса."
+            )
         if self.pk:
             old_name = self.__class__.objects.get(pk=self.pk).name
             if old_name != self.name:

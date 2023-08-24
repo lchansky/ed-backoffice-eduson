@@ -5,7 +5,42 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from promocodes.models import Promocode
+from promocodes.models import Promocode, PromocodeRequest
+
+
+@pytest.mark.django_db
+def test_return_course_title_for_promocodes_with_type_free_course():
+    c = Client()
+    promocode = Promocode.objects.create(
+        name="PROMOCODE",
+        type="free_course",
+        deadline=datetime.date.today(),
+        is_active=True,
+        course_title="Test course",
+    )
+    api_endpoint = reverse("promocode_api")
+
+    response = c.get(api_endpoint, {"name": promocode.name})
+
+    assert response.status_code == 200
+    assert response.json().get("course_title") == promocode.course_title
+
+
+@pytest.mark.django_db
+def test_return_course_title_for_promocodes_with_type_not_free_course():
+    c = Client()
+    promocode = Promocode.objects.create(
+        name="PROMOCODE",
+        type="additional_discount",
+        deadline=datetime.date.today(),
+        is_active=True,
+    )
+    api_endpoint = reverse("promocode_api")
+
+    response = c.get(api_endpoint, {"name": promocode.name})
+
+    assert response.status_code == 200
+    assert response.json().get("course_title") is None
 
 
 @pytest.mark.parametrize(
