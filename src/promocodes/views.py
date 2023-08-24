@@ -151,7 +151,8 @@ class PromocodeAPIView(APIView):
     def get(self, request):
         name = request.query_params.get('name', '')
         uuid = request.query_params.get('uuid', '')
-        promocode_request = PromocodeRequest(promocode_name=name, uuid=uuid)
+        yandex_client_id = request.query_params.get('yandex_client_id', '')
+        promocode_request = PromocodeRequest(promocode_name=name, uuid=uuid, yandex_client_id=yandex_client_id)
         try:
             promocode = Promocode.objects.get(name=name)
         except Promocode.DoesNotExist:

@@ -76,7 +76,9 @@ class Promocode(Model):
 
 class PromocodeRequest(Model):
     dt = DateTimeField(auto_now_add=True, verbose_name='Дата и время запроса')
+
     uuid = CharField(max_length=50, verbose_name='UUID', blank=True, null=True)
+    yandex_client_id = CharField(max_length=50, verbose_name='yandex_client_id', blank=True, null=True)
 
     promocode_name = CharField(max_length=50, verbose_name='Промокод')
     promocode_type = CharField(max_length=50, verbose_name='Тип промокода', blank=True, null=True)
