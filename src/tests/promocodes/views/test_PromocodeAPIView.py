@@ -120,3 +120,34 @@ def test_inactive_promocode():
     response = c.get(api_endpoint, {"name": promocode.name})
 
     assert response.status_code == 201
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "promocode_data, response_status_code",
+    (
+        ({"is_active": False, "deadline": None}, 201),
+        ({"is_active": True, "deadline": None}, 200),
+        ({"is_active": True, "deadline": datetime.date.today() - datetime.timedelta(days=1)}, 201),
+        ({"is_active": True, "deadline": datetime.date.today() + datetime.timedelta(days=1)}, 200),
+        ({"is_active": True, "deadline": datetime.date.today()}, 200),
+    )
+)
+def test_promocode_request_created(promocode_data, response_status_code):
+    c = Client()
+    promocode = Promocode.objects.create(
+        name="PROMOCODE",
+        type="additional_discount",
+        discount=0.1,
+        is_active=promocode_data.get("is_active"),
+        deadline=promocode_data.get("deadline"),
+    )
+    api_endpoint = reverse("promocode_api")
+
+    response = c.get(api_endpoint, {"name": promocode.name})
+
+    promocode_requests = PromocodeRequest.objects.order_by("-dt")
+    assert response.status_code == response_status_code
+    assert promocode_requests.count() == 1
+    assert promocode_requests.first().promocode_name == promocode.name
+    assert promocode_requests.first().response_status_code == response_status_code

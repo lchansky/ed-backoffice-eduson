@@ -83,7 +83,7 @@ class PromocodeRequest(Model):
     promocode_discount = FloatField(verbose_name='Скидка промокода', blank=True, null=True)
     promocode_deadline = DateField(verbose_name='Дата истечения промокода', blank=True, null=True)
 
-    response_status_code = CharField(max_length=50, verbose_name='Код ответа', blank=True, null=True)
+    response_status_code = IntegerField(verbose_name='Код ответа', blank=True, null=True)
 
     def __str__(self):
         return f'Запрос промокода {self.dt}, промокод {self.promocode_name}, UUID {self.uuid}'
