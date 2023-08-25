@@ -60,7 +60,7 @@ class Promocode(Model):
             if old_name != self.name:
                 raise ValidationError(
                     "Запрещено изменять название промокода. "
-                    "Создайте новый промокод, если хотите изменить название."
+                    "Создайте новый промокод, если хотите другое название."
                 )
         super().save(force_insert, force_update, using, update_fields)
 
