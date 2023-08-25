@@ -22,7 +22,7 @@ def test_cant_edit_promocode_name(user):
 
     c.login(username='user', password='password')
 
-    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount')
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', discount=10)
 
     promocode_edit_endpoint = reverse("promocode_edit", args=(promocode.pk,))
     response = c.post(
@@ -53,7 +53,7 @@ def test_edit_promocode_with_permission(user):
 
     c.login(username='user', password='password')
 
-    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount')
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', discount=10)
 
     promocode_edit_endpoint = reverse("promocode_edit", args=(promocode.pk,))
     response = c.post(
@@ -82,7 +82,7 @@ def test_edit_promocode_without_permission(user):
 
     c.login(username='user', password='password')
 
-    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount')
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', discount=10)
 
     promocode_edit_endpoint = reverse("promocode_edit", args=(promocode.pk,))
     response = c.post(
@@ -90,7 +90,7 @@ def test_edit_promocode_without_permission(user):
         data={
             'type': 'fix_discount',
             'name': 'PROMOCODE',
-            'discount': 0.5,
+            'discount': 50,
             'deadline': '',
             'is_active': True,
         },
@@ -119,7 +119,7 @@ def test_course_title_required_for_type_free_course(user, course_title, was_edit
     assert user.get_all_permissions()
     assert user.has_perm(f'{permission.content_type.app_label}.change_promocode')
     c.login(username='user', password='password')
-    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount')
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', discount=10)
     promocode_edit_endpoint = reverse("promocode_edit", args=(promocode.pk,))
 
     response = c.post(
@@ -127,7 +127,7 @@ def test_course_title_required_for_type_free_course(user, course_title, was_edit
         data={
             'type': 'free_course',
             'name': 'PROMOCODE',
-            'discount': 0.5,
+            'discount': '',
             'deadline': '',
             'is_active': True,
             'course_title': course_title,
@@ -150,7 +150,7 @@ def test_cant_set_promocode_deadline_in_past(user):
     c.login(username='user', password='password')
 
     tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', deadline=tomorrow)
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', discount=10, deadline=tomorrow)
     promocode_edit_endpoint = reverse("promocode_edit", args=(promocode.pk,))
 
     response = c.post(
@@ -158,6 +158,7 @@ def test_cant_set_promocode_deadline_in_past(user):
         data={
             'type': 'additional_discount',
             'name': 'PROMOCODE',
+            'discount': 10,
             'deadline': '2020-01-01',
         },
     )
@@ -166,3 +167,47 @@ def test_cant_set_promocode_deadline_in_past(user):
     assert response.status_code == 200
     assert hasattr(response.context['form'], 'errors')
     assert promocode.deadline == tomorrow
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "discount_type, discount",
+    (
+        ("additional_discount", -50),
+        ("additional_discount", 0),
+        ("additional_discount", 101),
+        ("additional_discount", ''),
+        ("fix_discount", -50),
+        ("fix_discount", 0),
+        ("fix_discount", 101),
+        ("fix_discount", ''),
+        ("additional_price", -1),
+        ("additional_price", 0),
+        ("additional_price", 8888888),
+    )
+)
+def test_wrong_discount_value(user, discount_type, discount):
+    c = Client()
+    permission = Permission.objects.get(codename='change_promocode')
+    user.user_permissions.add(permission)
+    user.save()
+    assert user.get_all_permissions()
+    assert user.has_perm(f'{permission.content_type.app_label}.change_promocode')
+    c.login(username='user', password='password')
+
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', discount=10)
+    promocode_edit_endpoint = reverse("promocode_edit", args=(promocode.pk,))
+
+    response = c.post(
+        promocode_edit_endpoint,
+        data={
+            'name': 'PROMOCODE',
+            'type': discount_type,
+            'discount': discount,
+        },
+    )
+    promocode.refresh_from_db()
+
+    assert response.status_code == 200
+    assert hasattr(response.context['form'], 'errors')
+    assert promocode.discount != discount

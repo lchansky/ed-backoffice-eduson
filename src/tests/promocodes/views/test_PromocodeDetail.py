@@ -12,7 +12,7 @@ from promocodes.models import Promocode
 def test_show_promocode(user):
     c = Client()
     assert c.login(username='user', password='password')
-    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount')
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', discount=10)
     promocode_detail_endpoint = reverse("promocode_detail", args=(promocode.pk,))
 
     response = c.get(promocode_detail_endpoint)
@@ -26,7 +26,7 @@ def test_show_promocode(user):
 def test_show_promocode_without_login(user):
     c = Client()
 
-    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount')
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', discount=10)
     promocode_detail_endpoint = reverse("promocode_detail", args=(promocode.pk,))
 
     response = c.get(promocode_detail_endpoint)

@@ -50,7 +50,14 @@ class Promocode(Model):
     def __str__(self):
         return self.name
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def full_clean(self, *args, **kwargs):
+        if self.discount is not None:
+            if self.type in ('additional_discount', 'fix_discount') and not (0 < self.discount < 100):
+                raise ValidationError("Скидка в процентах должна быть в диапазоне от 0 до 100")
+            if self.type == 'additional_price' and not (0 < self.discount < 1000000):
+                raise ValidationError("Скидка в рублях должна быть в диапазоне от 0 до 1.000.000")
+        elif self.discount is None and self.type in ('additional_discount', 'fix_discount', 'additional_price'):
+            raise ValidationError("Скидка не может быть пустой.")
         if self.type == 'free_course' and not self.course_title:
             raise ValidationError(
                 "Для промокода с типом 'Бесплатный курс' необходимо указать название курса."
@@ -60,7 +67,11 @@ class Promocode(Model):
             if old_name != self.name:
                 raise ValidationError("Запрещено изменять название промокода. "
                                       "Создайте новый промокод, если хотите другое название.")
+        return super().full_clean(*args, **kwargs)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.name = self.name.upper()
+        self.full_clean()
         super().save(force_insert, force_update, using, update_fields)
 
     def get_absolute_url(self):

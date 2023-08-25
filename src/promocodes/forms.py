@@ -48,6 +48,18 @@ class PromocodeCreateForm(ModelForm):
             raise ValidationError("Дата истечения не может быть в прошлом.")
         return self.cleaned_data['deadline']
 
+    def clean_discount(self):
+        discount = self.cleaned_data['discount']
+        discount_type = self.cleaned_data['type']
+        if discount is not None:
+            if discount_type in ('additional_discount', 'fix_discount') and not (0 < discount < 100):
+                raise ValidationError("Скидка в процентах должна быть в диапазоне от 0 до 100")
+            if discount_type == 'additional_price' and not (0 < discount < 1000000):
+                raise ValidationError("Скидка в рублях должна быть в диапазоне от 0 до 1.000.000")
+        elif discount is None and discount_type in ('additional_discount', 'fix_discount', 'additional_price'):
+            raise ValidationError("Скидка не может быть пустой.")
+        return discount
+
 
 class PromocodeEditForm(PromocodeCreateForm):
     class Meta:

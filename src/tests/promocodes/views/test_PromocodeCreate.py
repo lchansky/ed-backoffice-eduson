@@ -46,6 +46,7 @@ def test_cant_create_two_promocodes_with_equal_name_in_uppercase(user):
             'type': "additional_discount",
             'name': 'PROMOCODE',
             'is_active': True,
+            'discount': 10,
         },
     )
     promocode1 = Promocode.objects.get(name='PROMOCODE')
@@ -55,6 +56,7 @@ def test_cant_create_two_promocodes_with_equal_name_in_uppercase(user):
             'type': "additional_discount",
             'name': 'promocode',
             'is_active': True,
+            'discount': 10,
         },
     )
 
@@ -78,6 +80,43 @@ def test_cant_create_promocode_with_deadline_in_past(user):
             'name': 'PROMOCODE',
             'is_active': True,
             'deadline': '2020-01-01',
+            'discount': 10,
+        },
+    )
+
+    assert response.status_code == 200
+    assert hasattr(response.context['form'], 'errors')
+    assert Promocode.objects.count() == 0
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "discount_type, discount",
+    (
+        ("additional_discount", -50),
+        ("additional_discount", 0),
+        ("additional_discount", 101),
+        ("additional_discount", ''),
+        ("fix_discount", -50),
+        ("fix_discount", 0),
+        ("fix_discount", 101),
+        ("fix_discount", ''),
+        ("additional_price", -1),
+        ("additional_price", 0),
+        ("additional_price", 8888888),
+    )
+)
+def test_wrong_discount_value(user, discount_type, discount):
+    c = Client()
+    c.login(username='user', password='password')
+
+    promocode_create_endpoint = reverse("promocode_create")
+    response = c.post(
+        promocode_create_endpoint,
+        data={
+            'name': 'PROMOCODE',
+            'type': discount_type,
+            'discount': discount,
         },
     )
 

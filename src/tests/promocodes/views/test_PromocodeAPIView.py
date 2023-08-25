@@ -32,6 +32,7 @@ def test_return_course_title_for_promocodes_with_type_not_free_course():
     promocode = Promocode.objects.create(
         name="PROMOCODE",
         type="additional_discount",
+        discount=10,
         deadline=datetime.date.today(),
         is_active=True,
     )
@@ -46,16 +47,22 @@ def test_return_course_title_for_promocodes_with_type_not_free_course():
 @pytest.mark.parametrize(
     "promocode_data",
     (
-        {"name": "PROMOCODE", "type": "additional_discount"},
         {
             "name": "PROMOCODE",
             "type": "additional_discount",
+            "discount": 10,
+        },
+        {
+            "name": "PROMOCODE",
+            "type": "additional_discount",
+            "discount": 10,
             "deadline": datetime.date.today(),
             "is_active": True,
         },
         {
             "name": "PROMOCODE",
             "type": "additional_discount",
+            "discount": 10,
             "deadline": datetime.date.today() + datetime.timedelta(days=1),
         },
     ),
@@ -81,6 +88,7 @@ def test_valid_promocode(promocode_data: dict):
         {
             "name": "PROMOCODE",
             "type": "additional_discount",
+            "discount": 10,
             "deadline": datetime.date.today() - datetime.timedelta(days=1),
         },
     ),
@@ -113,6 +121,7 @@ def test_inactive_promocode():
     promocode = Promocode.objects.create(
         name="PROMOCODE",
         type="additional_discount",
+        discount=10,
         is_active=False,
     )
     api_endpoint = reverse("promocode_api")

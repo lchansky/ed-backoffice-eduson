@@ -61,6 +61,20 @@ def import_promocodes_from_xlsx(file, user):
                     f"Для промокодов с типом 'Бесплатный курс' (free_course) "
                     f"необходимо указать название курса (course_title)"
                 )
+            if not pd.isna(row['discount']):
+                if row['type'] in ('additional_discount', 'fix_discount') and not (0 < row['discount'] < 100):
+                    raise PromocodeImportException("Скидка в процентах должна быть в диапазоне от 0 до 100")
+                if row['type'] == 'additional_price' and not (0 < row['discount'] < 1000000):
+                    raise PromocodeImportException("Скидка в рублях должна быть в диапазоне от 0 до 1.000.000")
+            elif pd.isna(row['discount']) and row['type'] in ('additional_discount', 'fix_discount', 'additional_price'):
+                raise PromocodeImportException(
+                    "Скидка не может быть пустой для промокодов с типами "
+                    "additional_discount, fix_discount и additional_price."
+                )
+            if row['type'] == 'free_course' and not row['course_title']:
+                raise PromocodeImportException(
+                    "Для промокода с типом 'Бесплатный курс' необходимо указать название курса."
+                )
         except KeyError as exc:
             raise PromocodeImportException(
                 f"Не удалось импортировать промокоды. "
