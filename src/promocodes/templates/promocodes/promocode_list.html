@@ -55,11 +55,13 @@
                     <td>{{ promocode.updated_at }}</td>
                     <td><a href="{% url 'promocode_edit' promocode.pk %}">✏️</a></td>
                 </tr>
-            {% empty %}
-                Здесь ничего нет 😢
             {% endfor %}
         </tbody>
     </table>
+
+    {% if not promocodes %}
+        Здесь ничего нет 😢
+    {% endif %}
 
     {% load paginator_tags %}
     {% get_proper_elided_page_range paginator page_obj.number as page_range %}
