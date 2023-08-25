@@ -58,10 +58,9 @@ class Promocode(Model):
         if self.pk:
             old_name = self.__class__.objects.get(pk=self.pk).name
             if old_name != self.name:
-                raise ValidationError(
-                    "Запрещено изменять название промокода. "
-                    "Создайте новый промокод, если хотите другое название."
-                )
+                raise ValidationError("Запрещено изменять название промокода. "
+                                      "Создайте новый промокод, если хотите другое название.")
+        self.name = self.name.upper()
         super().save(force_insert, force_update, using, update_fields)
 
     def get_absolute_url(self):

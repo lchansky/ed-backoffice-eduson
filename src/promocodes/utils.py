@@ -37,7 +37,7 @@ def import_promocodes_from_xlsx(file, user):
             f"Не удалось прочитать файл. "
             f"Убедитесь, что все даты введены корректно, в формате 'дд.мм.гггг'."
         )
-
+    df['name'] = df['name'].apply(lambda x: str(x).upper())
     promocodes_to_create = []
     for index, row in df.iterrows():
         try:
@@ -75,14 +75,14 @@ def import_promocodes_from_xlsx(file, user):
         if promocodes_with_existing_name:
             promocodes_text = ', '.join([promocode.name for promocode in promocodes_with_existing_name])
             raise PromocodeImportException(
-                f"Не удалось импортировать промокоды. "
-                f"Данные промокоды уже есть в базе: {promocodes_text}"
+                f"Не удалось импортировать промокоды, т.к. некоторые из таблицы уже есть в базе. "
+                f"Данные промокоды необходимо убрать из таблицы: {promocodes_text}"
             )
         elif len(names) != len(set(names)):
             duplicates = list(set([name for name in names if names.count(name) > 1]))
             raise PromocodeImportException(
                 f"Не удалось импортировать промокоды. "
-                f"Данные промокоды встречаются в таблице более 1 раза: {duplicates}"
+                f"Уберите из таблицы промокоды, которые встречаются в таблице более 1 раза: {duplicates}"
             )
         else:
             raise PromocodeImportException(f"Не удалось импортировать промокоды. Непредвиденная ошибка.")

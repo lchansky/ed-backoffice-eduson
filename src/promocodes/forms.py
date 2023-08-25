@@ -38,6 +38,9 @@ class PromocodeCreateForm(ModelForm):
             )
         return self.cleaned_data['course_title']
 
+    def clean_name(self):
+        return self.cleaned_data['name'].upper()
+
 
 class PromocodeEditForm(ModelForm):
     class Meta:
@@ -67,6 +70,9 @@ class PromocodeEditForm(ModelForm):
                 "Для промокода с типом 'Бесплатный курс' необходимо указать название курса."
             )
         return self.cleaned_data['course_title']
+
+    def clean_name(self):
+        return self.cleaned_data['name'].upper()
 
 
 class PromocodesUploadForm(Form):
