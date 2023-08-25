@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.exceptions import ValidationError
 from django.forms import Form, CharField, ModelForm, FileField
 from django.forms.widgets import TextInput, Select, DateInput, NumberInput, CheckboxInput, FileInput
@@ -41,8 +43,13 @@ class PromocodeCreateForm(ModelForm):
     def clean_name(self):
         return self.cleaned_data['name'].upper()
 
+    def clean_deadline(self):
+        if self.cleaned_data['deadline'] and self.cleaned_data['deadline'] < datetime.date.today():
+            raise ValidationError("Дата истечения не может быть в прошлом.")
+        return self.cleaned_data['deadline']
 
-class PromocodeEditForm(ModelForm):
+
+class PromocodeEditForm(PromocodeCreateForm):
     class Meta:
         model = Promocode
         fields = ['type', 'discount', 'deadline', 'is_active', 'course_title', ]
@@ -63,16 +70,6 @@ class PromocodeEditForm(ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance.deadline:
             self.initial['deadline'] = self.instance.deadline.isoformat()
-
-    def clean_course_title(self):
-        if self.cleaned_data['type'] == 'free_course' and not self.cleaned_data['course_title']:
-            raise ValidationError(
-                "Для промокода с типом 'Бесплатный курс' необходимо указать название курса."
-            )
-        return self.cleaned_data['course_title']
-
-    def clean_name(self):
-        return self.cleaned_data['name'].upper()
 
 
 class PromocodesUploadForm(Form):

@@ -63,3 +63,24 @@ def test_cant_create_two_promocodes_with_equal_name_in_uppercase(user):
     assert Promocode.objects.count() == 1
     assert response2.status_code == 200
     assert hasattr(response2.context['form'], 'errors')
+
+
+@pytest.mark.django_db
+def test_cant_create_promocode_with_deadline_in_past(user):
+    c = Client()
+    c.login(username='user', password='password')
+
+    promocode_create_endpoint = reverse("promocode_create")
+    response = c.post(
+        promocode_create_endpoint,
+        data={
+            'type': "additional_discount",
+            'name': 'PROMOCODE',
+            'is_active': True,
+            'deadline': '2020-01-01',
+        },
+    )
+
+    assert response.status_code == 200
+    assert hasattr(response.context['form'], 'errors')
+    assert Promocode.objects.count() == 0

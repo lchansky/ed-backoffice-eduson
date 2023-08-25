@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from django.contrib.auth.models import Permission
 from django.test import Client
@@ -135,3 +137,32 @@ def test_course_title_required_for_type_free_course(user, course_title, was_edit
 
     edited = promocode.type == 'free_course'
     assert edited == was_edited
+
+
+@pytest.mark.django_db
+def test_cant_set_promocode_deadline_in_past(user):
+    c = Client()
+    permission = Permission.objects.get(codename='change_promocode')
+    user.user_permissions.add(permission)
+    user.save()
+    assert user.get_all_permissions()
+    assert user.has_perm(f'{permission.content_type.app_label}.change_promocode')
+    c.login(username='user', password='password')
+
+    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+    promocode = Promocode.objects.create(name='PROMOCODE', type='additional_discount', deadline=tomorrow)
+    promocode_edit_endpoint = reverse("promocode_edit", args=(promocode.pk,))
+
+    response = c.post(
+        promocode_edit_endpoint,
+        data={
+            'type': 'additional_discount',
+            'name': 'PROMOCODE',
+            'deadline': '2020-01-01',
+        },
+    )
+    promocode.refresh_from_db()
+
+    assert response.status_code == 200
+    assert hasattr(response.context['form'], 'errors')
+    assert promocode.deadline == tomorrow
