@@ -80,6 +80,7 @@ def test_valid_promocode(promocode_data: dict):
 
     # assert
     assert response.status_code == 200
+    assert response.json().get("status") == 200
 
 
 @pytest.mark.parametrize(
@@ -103,6 +104,7 @@ def test_expired_promocode(promocode_data: dict):
     response = c.get(api_endpoint, {"name": promocode.name})
 
     assert response.status_code == 201
+    assert response.json().get("status") == 201
 
 
 @pytest.mark.django_db
@@ -113,6 +115,7 @@ def test_not_existing_promocode():
     response = c.get(api_endpoint, {"name": "test_name"})
 
     assert response.status_code == 404
+    assert response.json().get("status") == 404
 
 
 @pytest.mark.django_db
@@ -129,6 +132,7 @@ def test_inactive_promocode():
     response = c.get(api_endpoint, {"name": promocode.name})
 
     assert response.status_code == 201
+    assert response.json().get("status") == 201
 
 
 @pytest.mark.django_db
