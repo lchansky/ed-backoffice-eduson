@@ -164,3 +164,24 @@ def test_promocode_request_created(promocode_data, response_status_code):
     assert promocode_requests.count() == 1
     assert promocode_requests.first().promocode_name == promocode.name
     assert promocode_requests.first().response_status_code == response_status_code
+
+
+@pytest.mark.parametrize(
+    "discount",
+    (5, 10, 20, 30, 40, 50, 60, 70),
+)
+@pytest.mark.django_db
+def test_promocode_discount_percent_view(discount):
+    c = Client()
+    promocode = Promocode.objects.create(
+        name="PROMOCODE",
+        type="additional_discount",
+        discount=discount,
+        is_active=True,
+    )
+    api_endpoint = reverse("promocode_api")
+
+    response = c.get(api_endpoint, {"name": promocode.name})
+
+    assert response.status_code == 200
+    assert response.json().get("discount") == discount / 100

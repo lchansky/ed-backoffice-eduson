@@ -45,7 +45,7 @@
                 <tr>
                     <td><a href="{% url 'promocode_detail' promocode.pk %}">{{ promocode.name }}</a></td>
                     <td>{{ promocode.get_type_display }}</td>
-                    <td>{{ promocode.discount }}</td>
+                    <td>{{ promocode.get_discount_display|default:"-" }}</td>
                     {% if promocode.is_expired %}
                         <td style="color: #BF4545;">{{ promocode.deadline|default:"-" }}</td>
                     {% else %}

@@ -46,10 +46,19 @@ def import_promocodes_from_xlsx(file, user):
             else:
                 deadline = row['deadline'].date()
 
+            if row['type'] in ('additional_discount', 'fix_discount'):
+                discount = row['discount'] * 100
+            elif row['type'] == 'additional_price':
+                discount = row['discount']
+            elif row['type'] in ('free_course', 'consultation'):
+                discount = None
+            else:
+                discount = None
+
             promocode = Promocode(
                 name=row['name'],
                 type=row['type'],
-                discount=row['discount'],
+                discount=discount,
                 course_title=None if pd.isna(row['course_title']) else row['course_title'],
                 deadline=deadline,
                 created_by=user,

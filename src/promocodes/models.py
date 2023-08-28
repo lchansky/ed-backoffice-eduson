@@ -50,6 +50,14 @@ class Promocode(Model):
     def __str__(self):
         return self.name
 
+    def get_discount_display(self):
+        if self.type in ('additional_discount', 'fix_discount'):
+            return f'{self.discount} %'
+        elif self.type in ('additional_price',):
+            return f'{self.discount} руб.'
+        else:
+            return self.discount
+
     def full_clean(self, *args, **kwargs):
         if self.discount is not None:
             if self.type in ('additional_discount', 'fix_discount') and not (0 < self.discount < 100):
