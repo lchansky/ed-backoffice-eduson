@@ -24,10 +24,6 @@ from promocodes.serializers import PromocodeSerializer
 from promocodes.utils import import_promocodes_from_xlsx, PromocodeImportException
 
 
-def home(request: WSGIRequest):
-    return render(request, 'promocodes/promocode_list.html', {'title': 'Промокоды'})
-
-
 class PromocodeList(LoginRequiredMixin, ListView, FormView):
     model = Promocode
     template_name = 'promocodes/promocode_list.html'
@@ -158,7 +154,7 @@ class PromocodeAPIView(APIView):
         except Promocode.DoesNotExist:
             promocode_request.response_status_code = 404
             promocode_request.save()
-            return Response({'status': '404', 'error': 'Промокод не найден'}, status=404)
+            return Response({'status': 404, 'error': 'Промокод не найден'}, status=404)
 
         promocode_request.promocode_type = promocode.type
         promocode_request.promocode_discount = promocode.discount
@@ -167,7 +163,7 @@ class PromocodeAPIView(APIView):
         if not promocode.is_active:
             promocode_request.response_status_code = 201
             promocode_request.save()
-            return Response({'status': '201', 'error': 'Промокод не активен'}, status=201)
+            return Response({'status': 201, 'error': 'Промокод не активен'}, status=201)
 
         if not promocode.is_expired:
             serializer = PromocodeSerializer(promocode)
@@ -177,4 +173,4 @@ class PromocodeAPIView(APIView):
         else:
             promocode_request.response_status_code = 201
             promocode_request.save()
-            return Response({'status': '201', 'error': 'Срок действия промокода истек'}, status=201)
+            return Response({'status': 201, 'error': 'Срок действия промокода истек'}, status=201)
