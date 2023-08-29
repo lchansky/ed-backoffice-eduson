@@ -42,6 +42,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'custom_middlewares.MixpanelMiddleware',
 ]
 
 ROOT_URLCONF = 'proj.urls'
@@ -131,3 +133,5 @@ CORS_ALLOWED_ORIGINS = [
     "https://eduson.tv",
     "https://backoffice-eduson.srv1.testla.app",
 ]
+
+MIXPANEL = True

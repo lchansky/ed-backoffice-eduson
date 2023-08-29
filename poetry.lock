@@ -265,6 +265,22 @@ files = [
 ]
 
 [[package]]
+name = "mixpanel"
+version = "4.10.0"
+description = "Official Mixpanel library for Python"
+optional = false
+python-versions = ">=2.7, !=3.4.*"
+files = [
+    {file = "mixpanel-4.10.0-py2.py3-none-any.whl", hash = "sha256:bbf6ebe5b79556931e1c6b67b4b9e0a1fab60f81638a35c167fca62e7c05398d"},
+    {file = "mixpanel-4.10.0.tar.gz", hash = "sha256:87733b1fa966bb4edc265a97d10ee71e22174e7a17a9ed6c739468b0eba88d3b"},
+]
+
+[package.dependencies]
+requests = ">=2.4.2"
+six = ">=1.9.0"
+urllib3 = "*"
+
+[[package]]
 name = "numpy"
 version = "1.25.0"
 description = "Fundamental package for array computing in Python"
@@ -777,4 +793,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "bda6bfa6f3b5a64994f86f35cf6605ad07f966cbfb09b4ccb3eda0e0d2b6397c"
+content-hash = "e61f58ea299208d9f3c23469ab1d3dded32f580f819d433f25008dbc0a565212"
