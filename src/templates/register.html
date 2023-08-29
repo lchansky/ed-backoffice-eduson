@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Авторизация - {{ block.super }}
+Регистрация - {{ block.super }}
 {% endblock %}
 
 {% block content %}
 
-<h1>Авторизация</h1>
+<h1>Регистрация</h1>
 
 <div class="text-start" style="max-width: 30rem;">
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary btn-block">Войти</button>
-        <a href="{% url 'register' %}">Зарегистрироваться</a>
+
+        <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+        <a href="{% url 'login' %}">Войти</a>
     </form>
 </div>
 

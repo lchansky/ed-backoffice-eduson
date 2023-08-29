@@ -6,13 +6,27 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from main.forms import UserSettingsForm, UserLoginForm
+from main.forms import UserSettingsForm, UserLoginForm, UserRegisterForm
 
 
 class MainPage(LoginRequiredMixin, TemplateView):
     template_name = 'main/main_page.html'
     extra_context = {'title': 'Главная страница'}
     login_url = 'login'
+
+
+def user_register(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    if request.method == 'POST':
+        form = UserRegisterForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Вы успешно зарегистрированы')
+            return redirect('login')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'register.html', {'form': form})
 
 
 def user_login(request):
