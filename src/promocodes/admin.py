@@ -3,8 +3,10 @@ import io
 
 import pandas as pd
 from django.contrib import admin
+from django.contrib.admin import AllValuesFieldListFilter
 from django.http import HttpResponse
-from rangefilter.filters import DateTimeRangeFilterBuilder
+from django.utils import timezone
+from rangefilter.filters import DateTimeRangeFilterBuilder, DateRangeFilterBuilder, NumericRangeFilter
 
 from promocodes.models import Promocode, PromocodeRequest
 
@@ -17,14 +19,28 @@ class PromocodeAdmin(admin.ModelAdmin):
 
 class PromocodeRequestAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PromocodeRequest._meta.fields]
+    search_fields = ('promocode_name', )
     list_filter = (
-        "dt",
-        DateTimeRangeFilterBuilder(
-            title="Custom title",
-            default_start=datetime.datetime(2023, 1, 1),
-            default_end=datetime.datetime(2023, 12, 31),
+        (
+            "dt",
+            DateTimeRangeFilterBuilder(
+                title="Дата запроса",
+                default_start=datetime.datetime(timezone.now().year, 1, 1),
+                default_end=datetime.datetime(timezone.now().year, 12, 31),
+            ),
         ),
-    ),
+        ("promocode_type", AllValuesFieldListFilter),
+        ("promocode_discount", NumericRangeFilter),
+        (
+            "promocode_deadline",
+            DateRangeFilterBuilder(
+                title='Дедлайн промокода',
+                default_start=timezone.now().date() - datetime.timedelta(days=30),
+                default_end=timezone.now().date(),
+            )
+        ),
+        ("response_status_code", AllValuesFieldListFilter),
+    )
 
     def export_xlsx(self, request, queryset):
         data = queryset.values()
@@ -46,7 +62,6 @@ class PromocodeRequestAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         # Disable delete for anyone
         return False
-
 
 
 admin.site.register(Promocode, PromocodeAdmin)
