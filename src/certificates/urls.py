@@ -17,5 +17,5 @@ urlpatterns = [
     path('courses/<int:pk>/edit', CourseEdit.as_view(), name='course_edit'),
     path('courses/<int:pk>/delete', CourseDelete.as_view(), name='course_delete'),
 
-    path('api/create_and_send_image', csrf_exempt(CertificateAPIView.as_view()))
+    path('api/create_and_send_image', csrf_exempt(CertificateAPIView.as_view()), name='certificate_api'),
 ]

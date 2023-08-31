@@ -81,9 +81,27 @@ class CertificateAPIView(APIView):
                 document=(filename2, image2.getvalue()),
                 caption=f'{request.build_absolute_uri(url)}',
             )
-            mp.track('certificates_api', 'Удостоверение создано и отправлено в телеграм')
+            mp.track(
+                'promocode_api',
+                'api_request',
+                {
+                    'response': 'Удостоверение создано и отправлено в телеграм',
+                    'view_name': 'CertificateAPIView',
+                    'url_name': reverse('certificate_api'),
+                    'status': 201,
+                }
+            )
             return Response(serializer.data(), status=status.HTTP_201_CREATED)
-        mp.track('certificates_api', 'bad_request')
+        mp.track(
+            'promocode_api',
+            'api_request',
+            {
+                'response': 'bad request',
+                'view_name': 'CertificateAPIView',
+                'url_name': reverse('certificate_api'),
+                'status': 400,
+            }
+        )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

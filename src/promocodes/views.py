@@ -155,7 +155,17 @@ class PromocodeAPIView(APIView):
         except Promocode.DoesNotExist:
             promocode_request.response_status_code = 404
             promocode_request.save()
-            mp.track('api', 'promocode_not_found', {'status': 404, 'error': 'Промокод не найден'})
+            mp.track(
+                'promocode_api',
+                'api_request',
+                {
+                    'response': 'promocode_not_found',
+                    'view_name': 'PromocodesAPIView',
+                    'url_name': reverse('promocode_api'),
+                    'status': 404,
+                    'error': 'Промокод не найден'
+                }
+            )
             return Response({'status': 404, 'error': 'Промокод не найден'}, status=404)
 
         promocode_request.promocode_type = promocode.type
@@ -165,17 +175,46 @@ class PromocodeAPIView(APIView):
         if not promocode.is_active:
             promocode_request.response_status_code = 201
             promocode_request.save()
-            mp.track('api', 'promocode_not_active', {'status': 201, 'error': 'Промокод не активен'})
+            mp.track(
+                'promocode_api',
+                'api_request',
+                {
+                    'response': 'promocode_not_active',
+                    'view_name': 'PromocodesAPIView',
+                    'url_name': reverse('promocode_api'),
+                    'status': 201,
+                    'error': 'Промокод не активен',
+                }
+            )
             return Response({'status': 201, 'error': 'Промокод не активен'}, status=201)
 
         if not promocode.is_expired:
             serializer = PromocodeSerializer(promocode)
             promocode_request.response_status_code = 200
             promocode_request.save()
-            mp.track('api', 'promocode_found', {'status': 200})
+            mp.track(
+                'promocode_api',
+                'api_request',
+                {
+                    'response': 'promocode_found',
+                    'view_name': 'PromocodesAPIView',
+                    'url_name': reverse('promocode_api'),
+                    'status': 200,
+                }
+            )
             return Response(serializer.data, status=200)
         else:
             promocode_request.response_status_code = 201
             promocode_request.save()
-            mp.track('api', 'promocode_expired', {'status': 201, 'error': 'Срок действия промокода истек'})
+            mp.track(
+                'promocode_api',
+                'api_request',
+                {
+                    'response': 'promocode_expired',
+                    'view_name': 'PromocodesAPIView',
+                    'url_name': reverse('promocode_api'),
+                    'status': 201,
+                    'error': 'Срок действия промокода истек',
+                }
+            )
             return Response({'status': 201, 'error': 'Срок действия промокода истек'}, status=201)
