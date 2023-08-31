@@ -9,4 +9,4 @@ SECRET_KEY = 'some_secret_key'
 DEBUG = True
 TEST_RUNNER = 'pytest_runner.DjangoTestSuiteRunner'
 
-MIXPANEL = True
+MIXPANEL = False

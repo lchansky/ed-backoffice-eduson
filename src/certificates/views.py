@@ -21,6 +21,7 @@ from certificates.forms import CertificateCreateForm, CertificateEditForm, Cours
 from certificates.images import CertificateImageGenerator
 from certificates.models import Certificate, Course
 from certificates.serializers import CertificateSerializer
+from mix_panel import mp
 from mixins.permission_required import PermissionRequiredMixin
 
 
@@ -80,7 +81,9 @@ class CertificateAPIView(APIView):
                 document=(filename2, image2.getvalue()),
                 caption=f'{request.build_absolute_uri(url)}',
             )
+            mp.track('certificates_api', 'Удостоверение создано и отправлено в телеграм')
             return Response(serializer.data(), status=status.HTTP_201_CREATED)
+        mp.track('certificates_api', 'bad_request')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

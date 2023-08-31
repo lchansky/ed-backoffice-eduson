@@ -14,8 +14,9 @@ class MixpanelMiddleware:
         username = request.user.username if request.user.is_authenticated else "Anonymous"
         view_name = request.resolver_match.view_name if request.resolver_match else "Unknown View"
         url_name = request.resolver_match.url_name if request.resolver_match else "Unknown URL"
-        app_name = request.resolver_match.app_name if request.resolver_match else "Unknown App"
 
+        if 'api' in url_name:
+            return
         try:
             mp.track(
                 username,
@@ -23,7 +24,6 @@ class MixpanelMiddleware:
                 {
                     'view_name': view_name,
                     'url_name': url_name,
-                    'app_name': app_name,
                 }
             )
         except Exception as exc:

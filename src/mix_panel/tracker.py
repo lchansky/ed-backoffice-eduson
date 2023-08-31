@@ -6,7 +6,7 @@ from mixpanel import Mixpanel, Consumer
 
 class EmptyMixPanelTracker:
     def track(self, *args, **kwargs):
-        print('Mixpanel event not sent because settings.MIXPANEL = False')
+        print('Mixpanel event not sent because settings.MIXPANEL = False. Data: ', args, kwargs)
 
 
 class MixPanelTracker:
