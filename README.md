@@ -3,11 +3,11 @@
 ### Пока что есть одна функция - ускорение работы с удостоверениями об образовании
 
 ### Деплой:  
-Просто заполняем env файл и пушим в ветку dokku  
-Либо локально запускаем docker-compose.yml. Сайт будет доступен на `localhost:80`  
+Настраиваем config:set в dokku и пушим в ветку dokku  
+Либо локально запускаем docker-compose-dev.yml. Сайт будет доступен на `localhost:80`  
 После деплоя доступен на https://backoffice-eduson.srv1.testla.app/
 
-##### Env файл:
+##### Env переменные (для локального запуска сохранить .env рядом с docker-compose-dev.yml:
 ```
 SECRET_KEY=django_secret_key
 SUPER_USER_NAME=admin
@@ -22,4 +22,6 @@ POSTGRES_DB=
 
 TG_TOKEN=
 TG_CHAT_ID=
+
+MIXPANEL_TOKEN=
 ```
