@@ -38,7 +38,7 @@
             <tr>
                 <td class="fs-5">Размер скидки</td>
                 <td class="fs-6">
-                    {{ promocode.discount }}
+                    {{ promocode.get_discount_display|default:"-" }}
                 </td>
             </tr>
             <tr>
