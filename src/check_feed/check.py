@@ -59,6 +59,7 @@ class FeedChecker:
         self.df["product_enum"] = self.df["product_enum"].fillna(0).astype(int)
         self.df["category_id"] = self.df["category_id"].fillna(0).astype(int)
         self.df["is_active"] = self.df["is_active"].fillna(0).astype(int)
+        self.df["Полная цена"] = self.df["Полная цена"].fillna(0).astype(int)
         # self.df = self.df.convert_dtypes(convert_floating=False)
         # self.df = self.df.applymap(lambda x: NAN if isinstance(x, NAType) else x)
         self.__is_processed = True
