@@ -1,7 +1,7 @@
 import os
 
 from django.conf import settings
-from mixpanel import Mixpanel, Consumer
+from mixpanel import Mixpanel, Consumer, MixpanelException
 
 
 class EmptyMixPanelTracker:
@@ -26,7 +26,11 @@ class MixPanelTracker:
         )
 
     def track(self, user, event_name, properties):
-        self.__mp.track(user, event_name, properties)
+        try:
+            self.__mp.track(user, event_name, properties)
+        except MixpanelException as exc:
+            print('Mixpanel event not sent. Data: ', user, event_name, properties)
+            print(exc)
 
 
 
