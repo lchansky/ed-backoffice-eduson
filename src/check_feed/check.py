@@ -315,7 +315,9 @@ class FeedChecker:
             else:
                 if cluster_number in CLUSTERS_NUMBERS.keys():
                     found_cluster_name = CLUSTERS_NUMBERS.get(cluster_number)
-                    if found_cluster_name != cluster_name and found_cluster_name in CLUSTERS:
+                    if (found_cluster_name != cluster_name
+                            and found_cluster_name in CLUSTERS
+                            and cluster_name != 'Бесплатный курс'):
                         value = f'Значение не совпадает! Номер {cluster_number} соответствует кластеру {found_cluster_name}'
                     else:
                         value = NAN
