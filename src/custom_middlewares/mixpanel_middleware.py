@@ -11,9 +11,24 @@ class MixpanelMiddleware:
         return response
 
     def send_mixpanel_event(self, request):
-        username = request.user.username if request.user.is_authenticated else "Anonymous"
+        if request.user.is_authenticated:
+            username = request.user.username
+            user_properties = {
+                '$username': request.user.username,
+                '$first_name': request.user.first_name,
+                '$last_name': request.user.last_name,
+                '$email': request.user.email,
+            }
+        else:
+            username = "Anonymous"
+            user_properties = {"$username": "Anonymous"}
+
         view_name = request.resolver_match.view_name if request.resolver_match else "Unknown View"
         url_name = request.resolver_match.url_name if request.resolver_match else "Unknown URL"
+        if hasattr(request.resolver_match, 'func'):
+            app_name = request.resolver_match.func.__module__.split('.')[0]
+        else:
+            app_name = 'Unknown App'
 
         if 'api' in url_name:
             return
@@ -24,7 +39,9 @@ class MixpanelMiddleware:
                 {
                     'view_name': view_name,
                     'url_name': url_name,
-                }
+                    'app_name': app_name,
+                },
+                user_properties=user_properties,
             )
         except Exception as exc:
             print('Mixpanel Error: ', exc)

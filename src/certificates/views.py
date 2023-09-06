@@ -82,7 +82,7 @@ class CertificateAPIView(APIView):
                 caption=f'{request.build_absolute_uri(url)}',
             )
             mp.track(
-                'promocode_api',
+                'certificate_api',
                 'api_request',
                 {
                     'response': 'Удостоверение создано и отправлено в телеграм',
@@ -93,7 +93,7 @@ class CertificateAPIView(APIView):
             )
             return Response(serializer.data(), status=status.HTTP_201_CREATED)
         mp.track(
-            'promocode_api',
+            'certificate_api',
             'api_request',
             {
                 'response': 'bad request',

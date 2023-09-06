@@ -82,6 +82,22 @@ class PromocodeCreate(LoginRequiredMixin, CreateView):
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
         messages.success(self.request, 'Промокод добавлен.')
+
+        url_name = self.request.resolver_match.url_name if self.request.resolver_match else "Unknown URL"
+        mp.track(
+            self.request.user.username,
+            'promocode_created',
+            {
+                'url_name': url_name,
+                'app_name': self.__module__.split('.')[0],
+            },
+            user_properties={
+                '$username': self.request.user.username,
+                '$first_name': self.request.user.first_name,
+                '$last_name': self.request.user.last_name,
+                '$email': self.request.user.email,
+            },
+        )
         return super().form_valid(form)
 
 
@@ -99,6 +115,21 @@ class PromocodeEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
         messages.success(self.request, 'Изменения сохранены')
+        url_name = self.request.resolver_match.url_name if self.request.resolver_match else "Unknown URL"
+        mp.track(
+            self.request.user.username,
+            'promocode_edited',
+            {
+                'url_name': url_name,
+                'app_name': self.__module__.split('.')[0],
+            },
+            user_properties={
+                '$username': self.request.user.username,
+                '$first_name': self.request.user.first_name,
+                '$last_name': self.request.user.last_name,
+                '$email': self.request.user.email,
+            },
+        )
         return super().form_valid(form)
 
 
@@ -157,7 +188,7 @@ class PromocodeAPIView(APIView):
             promocode_request.save()
             mp.track(
                 'promocode_api',
-                'api_request',
+                'not_found',
                 {
                     'response': 'promocode_not_found',
                     'view_name': 'PromocodesAPIView',
@@ -177,7 +208,7 @@ class PromocodeAPIView(APIView):
             promocode_request.save()
             mp.track(
                 'promocode_api',
-                'api_request',
+                'not_active',
                 {
                     'response': 'promocode_not_active',
                     'view_name': 'PromocodesAPIView',
@@ -194,7 +225,7 @@ class PromocodeAPIView(APIView):
             promocode_request.save()
             mp.track(
                 'promocode_api',
-                'api_request',
+                'found',
                 {
                     'response': 'promocode_found',
                     'view_name': 'PromocodesAPIView',
@@ -208,7 +239,7 @@ class PromocodeAPIView(APIView):
             promocode_request.save()
             mp.track(
                 'promocode_api',
-                'api_request',
+                'expired',
                 {
                     'response': 'promocode_expired',
                     'view_name': 'PromocodesAPIView',
