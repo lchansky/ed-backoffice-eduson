@@ -46,10 +46,20 @@ def import_promocodes_from_xlsx(file, user):
             else:
                 deadline = row['deadline'].date()
 
+            if not pd.isna(row['discount']):
+                try:
+                    discount = float(row['discount'])
+                except:
+                    raise PromocodeImportException(
+                        f"Не удалось импортировать промокоды. "
+                        f"Убедитесь, что в колонке 'discount' указано число."
+                        f"Ошибка в промокоде {row['name']}."
+                    )
+
             if row['type'] in ('additional_discount', 'fix_discount'):
-                discount = row['discount'] * 100
+                discount = discount * 100
             elif row['type'] == 'additional_price':
-                discount = row['discount']
+                discount = discount
             elif row['type'] in ('free_course', 'consultation'):
                 discount = None
             else:
@@ -70,12 +80,12 @@ def import_promocodes_from_xlsx(file, user):
                     f"Для промокодов с типом 'Бесплатный курс' (free_course) "
                     f"необходимо указать название курса (course_title)"
                 )
-            if not pd.isna(row['discount']):
-                if row['type'] in ('additional_discount', 'fix_discount') and not (0 < row['discount'] < 100):
+            if not pd.isna(discount):
+                if row['type'] in ('additional_discount', 'fix_discount') and not (0 < discount < 100):
                     raise PromocodeImportException("Скидка в процентах должна быть в диапазоне от 0 до 100")
-                if row['type'] == 'additional_price' and not (0 < row['discount'] < 1000000):
+                if row['type'] == 'additional_price' and not (0 < discount < 1000000):
                     raise PromocodeImportException("Скидка в рублях должна быть в диапазоне от 0 до 1.000.000")
-            elif pd.isna(row['discount']) and row['type'] in ('additional_discount', 'fix_discount', 'additional_price'):
+            elif pd.isna(discount) and row['type'] in ('additional_discount', 'fix_discount', 'additional_price'):
                 raise PromocodeImportException(
                     "Скидка не может быть пустой для промокодов с типами "
                     "additional_discount, fix_discount и additional_price."
