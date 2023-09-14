@@ -104,6 +104,8 @@ def test_successfully_register():
             'username': 'user12345',
             'password1': 'passWORD123jfdslfsd',
             'password2': 'passWORD123jfdslfsd',
+            'first_name': 'Иван',
+            'last_name': 'Иванов',
             'invitation_code': str(invitation.invite_code),
         },
     )
@@ -115,6 +117,8 @@ def test_successfully_register():
     user = User.objects.first()
     assert User.objects.count() == 1
     assert user.username == 'user12345'
+    assert user.first_name == 'Иван'
+    assert user.last_name == 'Иванов'
     assert user.has_perm('promocodes.add_promocode')
     assert user.has_perm('promocodes.change_promocode')
     assert user.has_perm('promocodes.view_promocode')
@@ -122,4 +126,39 @@ def test_successfully_register():
     assert invitation.is_used
     assert invitation.used_at
     assert invitation.used_by == user
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "field",
+    ['username', 'password1', 'password2', 'first_name', 'last_name', 'invitation_code'],
+    ids=['username', 'password1', 'password2', 'first_name', 'last_name', 'invitation_code'],
+)
+def test_cant_register_without_any_field(field):
+    c = Client()
+    permissions = Permission.objects.filter(codename__in=['add_promocode', 'change_promocode', 'view_promocode'])
+    invitation = Invitation.objects.create()
+    invitation.permissions.set(permissions)
+    invitation.save()
+
+    data = {
+        'username': 'user12345',
+        'password1': 'passWORD123jfdslfsd',
+        'password2': 'passWORD123jfdslfsd',
+        'first_name': 'Иван',
+        'last_name': 'Иванов',
+        'invitation_code': str(invitation.invite_code),
+    }
+    data.pop(field)
+
+    response = c.post(
+        reverse('register'),
+        data=data,
+    )
+    invitation.refresh_from_db()
+
+    assert response.status_code == 200
+    assert User.objects.count() == 0
+    form = response.context['form']
+    assert hasattr(form, 'errors')
 

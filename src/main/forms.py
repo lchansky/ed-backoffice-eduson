@@ -1,12 +1,15 @@
 import uuid
 
-from django.contrib.auth import password_validation
+from django.contrib.auth import password_validation, get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, UserCreationForm
 from django.core.exceptions import ValidationError
 from django.forms import TextInput, CharField, PasswordInput
 from django.utils.translation import gettext_lazy
 
 from main.models import Invitation
+
+
+User = get_user_model()
 
 
 class UserLoginForm(AuthenticationForm):
@@ -31,6 +34,10 @@ class UserLoginForm(AuthenticationForm):
 
 
 class UserRegisterForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ("username", "password1", "password2", "invitation_code", "first_name", "last_name")
+
     username = CharField(
         label='Имя пользователя',
         widget=TextInput(
@@ -58,6 +65,22 @@ class UserRegisterForm(UserCreationForm):
     )
     invitation_code = CharField(
         label='Инвайт код',
+        widget=TextInput(
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+    )
+    first_name = CharField(
+        label='Имя',
+        widget=TextInput(
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+    )
+    last_name = CharField(
+        label='Фамилия',
         widget=TextInput(
             attrs={
                 'class': 'form-control',
