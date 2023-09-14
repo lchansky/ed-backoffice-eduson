@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from main.forms import UserSettingsForm, UserLoginForm, UserRegisterForm
+from mix_panel import mp
 
 
 class MainPage(LoginRequiredMixin, TemplateView):
@@ -22,6 +23,13 @@ def user_register(request):
         form = UserRegisterForm(data=request.POST)
         if form.is_valid():
             form.save()
+            mp.set_user_properties(
+                form.cleaned_data['username'],
+                {
+                    '$first_name': form.cleaned_data['first_name'],
+                    '$last_name': form.cleaned_data['last_name'],
+                }
+            )
             messages.success(request, 'Вы успешно зарегистрированы')
             return redirect('login')
     else:
