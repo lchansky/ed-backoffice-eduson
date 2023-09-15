@@ -10,7 +10,13 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000/', 'http://backoffice-eduson.srv1.testla.app', 'https://backoffice-eduson.srv1.testla.app']
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000/',
+    'http://backoffice-eduson.srv1.testla.app',
+    'https://backoffice-eduson.srv1.testla.app',
+    'http://simba.srv1.testla.app',
+    'https://simba.srv1.testla.app',
+]
 
 
 # Application definition
