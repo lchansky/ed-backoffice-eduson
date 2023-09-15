@@ -23,7 +23,7 @@ class PromocodeCreateForm(ModelForm):
             'name': TextInput(attrs={'class': 'form-control'}),
             'type': Select(attrs={'class': 'form-select'}),
             'discount': NumberInput(attrs={'class': 'form-control'}),
-            'deadline': DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'DD/MM/YYYY'}),
+            'deadline': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'is_active': CheckboxInput(attrs={'class': 'form-check-input'}),
             'course_title': TextInput(attrs={'class': 'form-control'}),
         }
@@ -68,7 +68,7 @@ class PromocodeEditForm(PromocodeCreateForm):
         widgets = {
             'type': Select(attrs={'class': 'form-select'}),
             'discount': NumberInput(attrs={'class': 'form-control'}),
-            'deadline': DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'DD/MM/YYYY'}),
+            'deadline': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'is_active': CheckboxInput(attrs={'class': 'form-check-input'}),
             'course_title': TextInput(attrs={'class': 'form-control'}),
         }
