@@ -139,6 +139,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://eduson.academy",
     "https://eduson.tv",
     "https://backoffice-eduson.srv1.testla.app",
+    "https://simba.srv1.testla.app",
 ]
 
 MIXPANEL = True
