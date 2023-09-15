@@ -18,7 +18,7 @@
         <div class="col-auto btn-group" role="group" aria-label="Фильтры">
           <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes' %}">Все</a>
           <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes' %}?is_active=true">Активные</a>
-          <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes' %}?is_active=false">Не активные</a>
+          <a type="button" class="btn btn-outline-primary" href="{% url 'promocodes' %}?is_active=false">Деактивированные</a>
         </div>
         <div class="col-auto">
             {{ form.name }}
