@@ -8,7 +8,7 @@ def user():
 
     user = User.objects.create_user(
         username='user',
-        email='jlennon@beatles.com',
+        email='mail@email.com',
         password='password',
     )
     return user

@@ -25,7 +25,7 @@ from promocodes.serializers import PromocodeSerializer
 from promocodes.utils import import_promocodes_from_xlsx, PromocodeImportException
 
 
-class PromocodeList(LoginRequiredMixin, ListView, FormView):
+class PromocodeList(LoginRequiredMixin, PermissionRequiredMixin, ListView, FormView):
     model = Promocode
     template_name = 'promocodes/promocode_list.html'
     context_object_name = 'promocodes'
@@ -33,6 +33,9 @@ class PromocodeList(LoginRequiredMixin, ListView, FormView):
     login_url = 'login'
     paginate_by = 10
     form_class = PromocodeSearchForm
+    permission_required = 'promocodes.view_promocode'
+    permission_denied_redirect = 'home'
+    permission_denied_message = 'У вас нет прав для просмотра промокодов'
 
     def form_valid(self, form):
         query_string = urlencode(form.cleaned_data)
@@ -62,21 +65,27 @@ class PromocodeList(LoginRequiredMixin, ListView, FormView):
         return queryset
 
 
-class PromocodeDetail(LoginRequiredMixin, DetailView):
+class PromocodeDetail(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Promocode
     template_name = 'promocodes/promocode_detail.html'
     context_object_name = 'promocode'
     extra_context = {'title': 'Промокод'}
     login_url = 'login'
+    permission_required = 'promocodes.view_promocode'
+    permission_denied_redirect = 'home'
+    permission_denied_message = 'У вас нет прав для просмотра промокода'
 
 
-class PromocodeCreate(LoginRequiredMixin, CreateView):
+class PromocodeCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Promocode
     template_name = 'promocodes/promocode_create.html'
     context_object_name = 'promocode'
     form_class = PromocodeCreateForm
     extra_context = {'title': 'Добавление промокода'}
     login_url = 'login'
+    permission_required = 'promocodes.add_promocode'
+    permission_denied_redirect = 'promocode_list'
+    permission_denied_message = 'У вас нет прав для создания промокода'
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user

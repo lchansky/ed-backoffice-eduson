@@ -1,5 +1,4 @@
 import pytest
-from django.contrib.auth.models import Permission
 from django.test import Client
 from django.urls import reverse
 
@@ -16,7 +15,7 @@ from promocodes.models import Promocode
     ids=("created_with_course_title", "not_created_without_course_title"),
 )
 @pytest.mark.django_db
-def test_course_title_required_for_type_free_course(user, course_title, count_created):
+def test_course_title_required_for_type_free_course(user_with_promocodes_permissions, course_title, count_created):
     c = Client()
     c.login(username='user', password='password')
 
@@ -35,7 +34,7 @@ def test_course_title_required_for_type_free_course(user, course_title, count_cr
 
 
 @pytest.mark.django_db
-def test_cant_create_two_promocodes_with_equal_name_in_uppercase(user):
+def test_cant_create_two_promocodes_with_equal_name_in_uppercase(user_with_promocodes_permissions):
     c = Client()
     c.login(username='user', password='password')
 
@@ -68,7 +67,7 @@ def test_cant_create_two_promocodes_with_equal_name_in_uppercase(user):
 
 
 @pytest.mark.django_db
-def test_cant_create_promocode_with_deadline_in_past(user):
+def test_cant_create_promocode_with_deadline_in_past(user_with_promocodes_permissions):
     c = Client()
     c.login(username='user', password='password')
 
@@ -90,6 +89,30 @@ def test_cant_create_promocode_with_deadline_in_past(user):
 
 
 @pytest.mark.django_db
+def test_cant_create_promocode_without_permission(user):
+    c = Client()
+
+    assert not user.get_all_permissions()
+
+    c.login(username='user', password='password')
+
+    promocode_create_endpoint = reverse("promocode_create")
+    response = c.post(
+        promocode_create_endpoint,
+        data={
+            'type': "additional_discount",
+            'name': 'PROMOCODE',
+            'is_active': True,
+            'discount': 10,
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse("promocode_list")
+    assert Promocode.objects.count() == 0
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     "discount_type, discount",
     (
@@ -106,7 +129,7 @@ def test_cant_create_promocode_with_deadline_in_past(user):
         ("additional_price", 8888888),
     )
 )
-def test_wrong_discount_value(user, discount_type, discount):
+def test_wrong_discount_value(user_with_promocodes_permissions, discount_type, discount):
     c = Client()
     c.login(username='user', password='password')
 
