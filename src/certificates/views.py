@@ -22,7 +22,7 @@ from certificates.images import CertificateImageGenerator
 from certificates.models import Certificate, Course
 from certificates.serializers import CertificateSerializer
 from mix_panel import mp
-from mixins.permission_required import PermissionRequiredMixin
+from permissions.permission_required import PermissionRequiredMixin
 
 
 class CertificateList(LoginRequiredMixin, ListView):

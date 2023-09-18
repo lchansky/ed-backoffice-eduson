@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from mix_panel import mp
-from mixins.permission_required import PermissionRequiredMixin
+from permissions.permission_required import PermissionRequiredMixin, permission_required
 from promocodes.forms import PromocodeSearchForm, PromocodeCreateForm, PromocodeEditForm, PromocodesUploadForm
 from promocodes.models import Promocode, PromocodeRequest
 from promocodes.serializers import PromocodeSerializer
@@ -143,6 +143,7 @@ class PromocodeEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 
 
 @login_required(login_url='login')
+@permission_required('promocodes.add_promocode', 'home', "У вас нет прав для добавления промокодов")
 def promocode_import_xlsx(request: WSGIRequest):
     if request.method == 'POST':
         form = PromocodesUploadForm(request.POST, request.FILES)
@@ -166,6 +167,7 @@ def promocode_import_xlsx(request: WSGIRequest):
 
 
 @login_required(login_url='login')
+@permission_required('promocodes.view_promocode', 'home', "У вас нет прав для просмотра промокодов")
 def promocode_export_xlsx(request: WSGIRequest):
     promocodes = Promocode.objects.all().values()
 
