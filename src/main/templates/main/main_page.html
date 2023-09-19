@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
+    <h1>🦁 {{ title }}</h1>
+    <p class="text-center fs-5">
+        {{ text|linebreaksbr|safe }}
+    </p>
     
 {% endblock %}

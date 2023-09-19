@@ -12,7 +12,10 @@ from mix_panel import mp
 
 class MainPage(LoginRequiredMixin, TemplateView):
     template_name = 'main/main_page.html'
-    extra_context = {'title': 'Главная страница'}
+    extra_context = {
+        'title': 'Главная страница',
+        'text': 'Добро пожаловать на главную страницу.\nSIMBA – System for Information Management, Business Access',
+    }
     login_url = 'login'
 
 
