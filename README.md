@@ -5,7 +5,7 @@
 ### Деплой:  
 Настраиваем config:set в dokku и пушим в ветку dokku  
 Либо локально запускаем docker-compose-dev.yml. Сайт будет доступен на `localhost:80`  
-После деплоя доступен на https://simba.srv1.testla.app/
+После деплоя доступен на https://simba.vs2.srv.eduson.tv
 
 ##### Env переменные (для локального запуска сохранить .env рядом с docker-compose-dev.yml:
 ```

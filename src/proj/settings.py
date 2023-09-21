@@ -16,6 +16,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://backoffice-eduson.srv1.testla.app',
     'http://simba.srv1.testla.app',
     'https://simba.srv1.testla.app',
+    'http://simba.vs2.srv.eduson.tv',
+    'https://simba.vs2.srv.eduson.tv',
 ]
 
 
@@ -140,6 +142,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://eduson.tv",
     "https://backoffice-eduson.srv1.testla.app",
     "https://simba.srv1.testla.app",
+    'https://simba.vs2.srv.eduson.tv',
 ]
 
 MIXPANEL = True
