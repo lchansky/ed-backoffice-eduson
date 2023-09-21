@@ -14,6 +14,8 @@ def str_to_date(date_str):
     try:
         if date_str == '01.01.2100':
             return pd.NA
+        if pd.isna(date_str):
+            return pd.NA
         return datetime.datetime.strptime(date_str, '%d.%m.%Y')
     except ValueError:
         return pd.NA
