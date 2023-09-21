@@ -5,14 +5,8 @@ from django.contrib.auth.models import Permission
 from django.test import Client
 from django.urls import reverse
 
-from certificates.models import Certificate, Course
+from certificates.models import Certificate
 from tests.conftest import user
-
-
-@pytest.fixture
-@pytest.mark.django_db
-def course():
-    return Course.objects.create(name='Python', hours=100)
 
 
 @pytest.mark.django_db
@@ -44,10 +38,12 @@ def test_create_certificate_with_permission(user, course):
 
 
 @pytest.mark.django_db
-def test_edit_certificate_without_permission(user, course):
+def test_cant_create_certificate_without_permission(user, course):
     c = Client()
 
     c.login(username='user', password='password')
+
+    assert not user.get_all_permissions()
 
     certificate_create_endpoint = reverse("certificate_create")
     response = c.post(
@@ -60,6 +56,8 @@ def test_edit_certificate_without_permission(user, course):
     )
 
     assert response.status_code == 302
-    certificate_list_endpoint = reverse("certificate_list")
-    assert response.url == certificate_list_endpoint
+    assert response.url == reverse("certificate_list")
+    assert Certificate.objects.count() == 0
+
+
 

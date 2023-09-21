@@ -22,23 +22,29 @@ from certificates.images import CertificateImageGenerator
 from certificates.models import Certificate, Course
 from certificates.serializers import CertificateSerializer
 from mix_panel import mp
-from permissions.permission_required import PermissionRequiredMixin
+from permissions.permission_required import PermissionRequiredMixin, permission_required
 
 
-class CertificateList(LoginRequiredMixin, ListView):
+class CertificateList(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Certificate
     template_name = 'certificates/certificate_list.html'
     context_object_name = 'certificates'
     extra_context = {'title': 'Список удостоверений об образовании'}
     login_url = 'login'
+    permission_required = 'certificates.view_certificate'
+    permission_denied_redirect = 'home'
+    permission_denied_message = 'У вас нет прав для просмотра удостоверений'
 
 
-class CertificateDetail(LoginRequiredMixin, DetailView):
+class CertificateDetail(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Certificate
     template_name = 'certificates/certificate_detail.html'
     context_object_name = 'certificate'
     extra_context = {'title': 'Удостоверение'}
     login_url = 'login'
+    permission_required = 'certificates.view_certificate'
+    permission_denied_redirect = 'home'
+    permission_denied_message = 'У вас нет прав для просмотра удостоверений'
 
 
 class CertificateCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
@@ -105,13 +111,16 @@ class CertificateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CertificateEdit(LoginRequiredMixin, UpdateView):
+class CertificateEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Certificate
     context_object_name = 'certificate'
     template_name = 'certificates/certificate_edit.html'
     extra_context = {'title': 'Редактирование удостоверения'}
     form_class = CertificateEditForm
     login_url = 'login'
+    permission_required = 'certificates.change_certificate'
+    permission_denied_message = 'У вас нет прав для редактирования удостоверений'
+    permission_denied_redirect = 'certificate_list'
 
     def form_valid(self, form):
         messages.success(self.request, 'Изменения сохранены')
@@ -119,6 +128,7 @@ class CertificateEdit(LoginRequiredMixin, UpdateView):
 
 
 @login_required(login_url='login')
+@permission_required("certificates.view_certificate", "home", "У вас нет прав для просмотра удостоверений")
 def certificate_image_view(request: HttpRequest, pk: int, image_type: str):
     try:
         certificate = Certificate.objects.get(pk=pk)
@@ -140,6 +150,7 @@ def certificate_image_view(request: HttpRequest, pk: int, image_type: str):
 
 
 @login_required(login_url='login')
+@permission_required("certificates.view_certificate", "home", "У вас нет прав для просмотра удостоверений")
 def certificate_download_all_info(request: HttpRequest):
     certificates = Certificate.objects.all().values('id', 'date', 'student_fio', 'course_id', 'course__name', 'course__hours')
 
@@ -154,29 +165,38 @@ def certificate_download_all_info(request: HttpRequest):
     return response
 
 
-class CourseList(LoginRequiredMixin, ListView):
+class CourseList(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Course
     template_name = 'certificates/course_list.html'
     context_object_name = 'courses'
     extra_context = {'title': 'Список курсов'}
     login_url = 'login'
+    permission_required = 'certificates.view_course'
+    permission_denied_message = 'У вас нет прав для просмотра курсов'
+    permission_denied_redirect = 'home'
 
 
-class CourseDetail(LoginRequiredMixin, DetailView):
+class CourseDetail(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Course
     template_name = 'certificates/course_detail.html'
     context_object_name = 'course'
     extra_context = {'title': '📚 Курс'}
     login_url = 'login'
+    permission_required = 'certificates.view_course'
+    permission_denied_message = 'У вас нет прав для просмотра курсов'
+    permission_denied_redirect = 'home'
 
 
-class CourseCreate(LoginRequiredMixin, CreateView):
+class CourseCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Course
     template_name = 'certificates/course_create.html'
     context_object_name = 'course'
     form_class = CourseCreateForm
     extra_context = {'title': '📚 Добавление курса'}
     login_url = 'login'
+    permission_required = 'certificates.add_course'
+    permission_denied_message = 'У вас нет прав для добавления курсов'
+    permission_denied_redirect = 'home'
 
     def form_valid(self, form):
         messages.success(
@@ -186,24 +206,30 @@ class CourseCreate(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class CourseEdit(LoginRequiredMixin, UpdateView):
+class CourseEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Course
     context_object_name = 'course'
     template_name = 'certificates/course_edit.html'
     extra_context = {'title': '📚 Редактирование курса'}
     form_class = CourseEditForm
     login_url = 'login'
+    permission_required = 'certificates.change_course'
+    permission_denied_message = 'У вас нет прав для редактирования курсов'
+    permission_denied_redirect = 'course_list'
 
     def form_valid(self, form):
         messages.success(self.request, 'Изменения сохранены')
         return super().form_valid(form)
 
 
-class CourseDelete(LoginRequiredMixin, DeleteView):
+class CourseDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Course
     context_object_name = 'course'
     extra_context = {'title': 'Удаление курса'}
     login_url = 'login'
+    permission_required = 'certificates.delete_course'
+    permission_denied_message = 'У вас нет прав для удаления курсов'
+    permission_denied_redirect = 'course_list'
 
     def form_valid(self, form):
         try:
