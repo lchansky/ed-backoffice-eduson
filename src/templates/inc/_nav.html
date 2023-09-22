@@ -62,6 +62,10 @@
                         </div>
                         <div class="vr"></div>
                         <a class="nav-link" href="{% url 'settings' %}"><span class="navbar-text">Настройки</span></a>
+                        {% if user.is_superuser %}
+                            <div class="vr"></div>
+                            <a class="nav-link" href="{% url 'admin:index' %}"><span class="navbar-text">Админка</span></a>
+                        {% endif %}
                         <div class="vr"></div>
                         <a href="{% url 'logout' %}" class="btn btn-outline-danger">Выход</a>
                     </div>
