@@ -8,9 +8,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, FormView, DetailView, UpdateView, CreateView
@@ -53,10 +55,17 @@ class PromocodeList(LoginRequiredMixin, PermissionRequiredMixin, ListView, FormV
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        is_active = self.request.GET.get('is_active')
-        if is_active:
-            is_active = True if is_active == 'true' else False
-            queryset = queryset.filter(is_active=is_active)
+        is_active_filter = self.request.GET.get('is_active')
+        if is_active_filter:
+            is_active = True if is_active_filter == 'true' else False
+            if is_active:
+                is_expired_q = Q(deadline__gte=timezone.now().date()) | Q(deadline__isnull=True)
+                active_q = Q(is_active=is_active)
+                queryset = queryset.filter(is_expired_q & active_q)
+            else:
+                is_expired_q = Q(deadline__lt=timezone.now().date())
+                active_q = Q(is_active=is_active)
+                queryset = queryset.filter(is_expired_q | active_q)
 
         name = self.request.GET.get('name')
         if name:

@@ -14,6 +14,7 @@ from django.db.models import (
     IntegerField,
 )
 from django.urls import reverse
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -87,7 +88,7 @@ class Promocode(Model):
 
     @property
     def is_expired(self):
-        if self.deadline and self.deadline < datetime.date.today():
+        if self.deadline and self.deadline < timezone.now().date():
             return True
         return False
 
