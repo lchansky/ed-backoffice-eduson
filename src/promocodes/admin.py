@@ -15,6 +15,7 @@ class PromocodeAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Promocode._meta.fields]
     list_filter = ('type', 'is_active', 'created_at', 'updated_at', 'created_by', 'updated_by')
     search_fields = ('type', 'is_active')
+    readonly_fields = ("name", "created_at", "updated_at", "created_by", "updated_by")
 
 
 class PromocodeRequestAdmin(admin.ModelAdmin):

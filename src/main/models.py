@@ -24,7 +24,7 @@ class Invitation(Model):
     used_at = DateTimeField(blank=True, null=True, verbose_name='Дата использования')
 
     is_used = BooleanField(default=False, verbose_name='Использован')
-    used_by = ForeignKey(User, blank=True, null=True, on_delete=DO_NOTHING)
+    used_by = ForeignKey(User, blank=True, null=True, on_delete=DO_NOTHING, verbose_name='Кем использован')
 
 
     class Meta:

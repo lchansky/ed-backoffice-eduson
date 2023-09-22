@@ -105,5 +105,9 @@ class PromocodeRequest(Model):
 
     response_status_code = IntegerField(verbose_name='Код ответа', blank=True, null=True)
 
+    class Meta:
+        verbose_name = 'Запрос промокода'
+        verbose_name_plural = 'Запросы промокодов'
+
     def __str__(self):
         return f'Запрос промокода {self.dt}, промокод {self.promocode_name}, UUID {self.uuid}'
