@@ -1,6 +1,7 @@
 #!/bin/sh
 
 python manage.py collectstatic --no-input
+cp /proj/static_for_build/favicon.ico /proj/src/staticfiles/favicon.ico
 python manage.py migrate --no-input
 python manage.py init_courses  # Кастомная команда
 
