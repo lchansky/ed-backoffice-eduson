@@ -174,7 +174,7 @@ class FeedChecker:
             'Название', 'category_id', 'is_active', 'product_key', 'product_description',
             'fake_price', 'real_price', 'discount', 'discount_amount', 'installment_price',
             'product_url', 'program_url', 'demo_url', 'picture_url',
-            'duration_months', 'course_type',
+            'duration_months', 'course_type', 'course_difficulty', 'is_blog', 'webinars_exist',
         ]
         result_df = df_renamed[columns_to_keep]
         return result_df
