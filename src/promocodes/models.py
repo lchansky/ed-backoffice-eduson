@@ -112,3 +112,7 @@ class PromocodeRequest(Model):
 
     def __str__(self):
         return f'Запрос промокода {self.dt}, промокод {self.promocode_name}, UUID {self.uuid}'
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.promocode_name != 'XQECG9RHJG4LBJ87PR3C':
+            super().save(force_insert, force_update, using, update_fields)

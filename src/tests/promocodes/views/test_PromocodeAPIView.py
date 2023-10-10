@@ -166,6 +166,24 @@ def test_promocode_request_created(promocode_data, response_status_code):
     assert promocode_requests.first().response_status_code == response_status_code
 
 
+@pytest.mark.django_db
+def test_promocode_request_not_created_if_promocode_is_fake():
+    c = Client()
+    promocode = Promocode.objects.create(
+        name="XQECG9RHJG4LBJ87PR3C",
+        type="additional_discount",
+        discount=0.1,
+        is_active=True,
+    )
+    api_endpoint = reverse("promocode_api")
+
+    response = c.get(api_endpoint, {"name": "XQECG9RHJG4LBJ87PR3C"})
+
+    promocode_requests = PromocodeRequest.objects.all()
+    assert response.status_code == 200
+    assert promocode_requests.count() == 0
+
+
 @pytest.mark.parametrize(
     "discount",
     (5, 10, 20, 30, 40, 50, 60, 70),
