@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}
+🎧 {{ recording.audio_file_name }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>🎧 {{ title }} {{ recording.audio_file_name }}</h2>
+    <hr>
+    <style>
+        td {
+           width: 50%
+        }
+    </style>
+    <div class="list-group-item list-group-item text-start fs-4" style="max-width:600px;">
+        <table class="table" style="max-width: 600px;">
+            <tbody>
+            <tr>
+                <td class="fs-5">Название файла</td>
+                <td class="fs-6">
+                    {{ recording.audio_file_name }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Статус</td>
+                <td class="fs-6">
+                    {{ recording.get_status_display|default:"-" }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Кем создана</td>
+                <td class="fs-6">
+                    {{ recording.created_by|default:"-" }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Когда создана</td>
+                <td class="fs-6">
+                    {{ recording.created_at|default:"-" }}
+                </td>
+            </tr>
+            <tr>
+                <td class="fs-5">Когда обработана</td>
+                <td class="fs-6">
+                    {{ recording.processed_at|default:"-" }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h3>Расшифровка</h3>
+        {% for speech in recording.speeches %}
+            {% if speech.text %}
+                <div class="fs-6" style="
+                margin: 10px;
+                padding: 10px;
+                text-align: left;
+                background-opacity: 0.5;
+                {% if speech.speaker == 'А' %}
+                    background-color: #e1fcf1;
+                {% else %}
+                    background-color: #fcf5e1;
+                {% endif %}">
+                    <b>{{ speech.speaker }}, {{ speech.start }} - {{ speech.end }}</b>
+                    <div>
+                        {{ speech.text }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+
+{% endblock %}

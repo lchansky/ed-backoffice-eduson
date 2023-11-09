@@ -35,10 +35,12 @@ INSTALLED_APPS = [
     'certificates.apps.CertificatesConfig',
     'check_feed.apps.CheckFeedConfig',
     'promocodes.apps.PromocodesConfig',
+    'speech2text.apps.Speech2TextConfig',
 
     'rest_framework',
     'rangefilter',
     'corsheaders',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -94,6 +96,8 @@ DATABASES = {
     }
 }
 
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -132,6 +136,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -145,4 +153,15 @@ CORS_ALLOWED_ORIGINS = [
     'https://simba.vs2.srv.eduson.tv',
 ]
 
-MIXPANEL = True
+MIXPANEL = False
+
+SPEECH2TEXT_TEMP_DIR = BASE_DIR / 'temp'
+SPEECH2TEXT_TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
+SPEECH2TEXT_MEDIA_DIR = MEDIA_ROOT / 'speech2text'
+SPEECH2TEXT_MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+
+SPEECH2TEXT_MEDIA_URL = MEDIA_URL + 'speech2text/'
+
+
+HUGGINGFACE_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN')

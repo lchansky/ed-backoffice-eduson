@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   nginx:
-    restart: always
+#    restart: always
     image: nginx
     container_name: nginx
     volumes:
@@ -14,7 +14,7 @@ services:
       - django_gunicorn
 
   django_gunicorn:
-    restart: always
+#    restart: always
     container_name: django_gunicorn
     build:
       context: .
@@ -25,10 +25,51 @@ services:
       - .env
     ports:
       - "5000:5000"
+    entrypoint: sh /entrypoint.sh
+
+  worker:
+    #    restart: always
+    depends_on:
+      - postgres
+    entrypoint: [ "celery", "--workdir=.", "-A", "proj", "worker", "--concurrency=1" ]
+
+    container_name: worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./:/proj
+
+  celery_beat:
+    #    restart: always
+    depends_on:
+      - postgres
+    entrypoint: [ "celery", "--workdir=.", "-A", "proj", "beat", "-l", "warning", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler" ]
+
+    container_name: celery_beat
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./:/proj
+
+  redis:
+    #    restart: always
+    image: redis
+    container_name: redis
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+    command: redis-server ${REDIS_ARGS}
 
   postgres:
     image: postgres
-    restart: always
+#    restart: always
     environment:
       POSTGRES_INITDB_ARGS: "-A md5"
     env_file:

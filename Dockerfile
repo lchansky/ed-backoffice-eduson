@@ -3,6 +3,7 @@ FROM python:3.10
 RUN apt update -y && apt upgrade -y
 RUN apt install -y apt-transport-https
 RUN /usr/local/bin/python -m pip install --upgrade pip
+RUN apt install -y ffmpeg
 
 RUN pip install 'poetry==1.5.0'
 COPY poetry.lock pyproject.toml /proj/
@@ -13,4 +14,4 @@ COPY . /proj/
 WORKDIR /proj/src
 
 COPY ./entrypoint.sh /
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+#ENTRYPOINT ["sh", "/entrypoint.sh"]

@@ -1,0 +1,66 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+{{ title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        $(document).ready(function(){
+            $('#upload-btn').click(function(){
+                var fileInput = $('#audio-file');
+                var uploadedFile = fileInput[0].files[0];
+
+                if (!uploadedFile) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ошибка',
+                        text: 'Файл не выбран. Выберите файл для загрузки.'
+                    });
+                    return; // Прерываем отправку формы, если файл не выбран
+                }
+
+                if (uploadedFile.type != 'audio/mpeg') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ошибка',
+                        text: 'Неверный формат файла. Выберите файл с расширением .mp3'
+                    });
+                    return; // Прерываем отправку формы, если файл не выбран
+                }
+
+                var formData = new FormData();
+                formData.append('audio_file', uploadedFile);
+                formData.append('user_id', {{ user_id|default:"null" }});
+
+                // Показываем всплывающее уведомление о начале обработки
+                Swal.fire({
+                    title: 'Обработка началась',
+                    text: 'Ваш файл начал обрабатываться',
+                    icon: 'info',
+                    showConfirmButton: false,
+                    timer: 1500 // Время показа уведомления в миллисекундах
+                });
+                var $crf_token = $('[name="csrfmiddlewaretoken"]').attr('value');
+                $.ajax({
+                    url: '/speech2text/transcribe_recording',
+                    headers:{"X-CSRFToken": $crf_token},
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false
+                });
+            });
+        });
+    </script>
+
+    <form id="upload-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="audio_file" id="audio-file">
+        <button type="button" id="upload-btn">Загрузить</button>
+    </form>
+    <a style="margin:20px;" href="{% url 'recordings_list' %}" class="col btn btn-outline-primary btn-lg">Список аудиозаписей</a>
+{% endblock %}

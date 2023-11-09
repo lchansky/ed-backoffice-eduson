@@ -163,3 +163,7 @@ trash.py
 dev.env
 .staticfiles/
 /src/staticfiles/
+/src/media/
+/src/speech2text/input/
+/src/temp/
+/src/speech2text/output/

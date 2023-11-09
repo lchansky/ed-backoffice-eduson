@@ -30,7 +30,7 @@ class MixpanelMiddleware:
         else:
             app_name = 'Unknown App'
 
-        if 'api' in url_name:
+        if not url_name or 'api' in url_name:
             return
         try:
             mp.track(

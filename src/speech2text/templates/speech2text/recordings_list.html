@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}
+🎧 {{ title }} - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h2>
+        🎧 {{ title }}
+    </h2>
+    <hr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Название файла</th>
+                <th scope="col">Статус</th>
+                <th scope="col">Кем создана</th>
+                <th scope="col">Когда создана</th>
+                <th scope="col">Когда обработана</th>
+                <th scope="col">Текст</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for recording in recordings %}
+                <tr>
+                    <td><a href="{% url 'recording_detail' recording.pk %}">{{ recording.audio_file_name|truncatechars:25 }}</a></td>
+                    <td>{{ recording.get_status_display|default:"-" }}</td>
+                    <td>{{ recording.created_by|default:"-" }}</td>
+                    <td>{{ recording.created_at|default:"-" }}</td>
+                    <td>{{ recording.processed_at|default:"-" }}</td>
+                    <td>{{ recording.text|truncatechars:100|default:"-" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not recordings %}
+        Ещё нет ни одной записи 😢
+    {% endif %}
+
+    {% load paginator_tags %}
+    {% get_proper_elided_page_range paginator page_obj.number as page_range %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% for i in page_range %}
+                {% if page_obj.number == i %}
+                    <li class="active page-item">
+                        <span class="page-link">{{ i }}</span>
+                    </li>
+                {% else %}
+                    {% if i == paginator.ELLIPSIS %}
+                        <li class="page-item">
+                            <span class="page-link">{{ paginator.ELLIPSIS }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}&{{ active_filters_query }}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+
+
+
+{% endblock %}

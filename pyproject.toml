@@ -24,6 +24,14 @@ pytest-xdist = "^3.3.1"
 django-cors-headers = "^4.2.0"
 mixpanel = "^4.10.0"
 whitenoise = "^6.5.0"
+pydub = "^0.25.1"
+pyannote-audio = "^3.0.1"
+openai-whisper = "^20230918"
+torch = ">=2.0.0, !=2.0.1, !=2.1.0"
+openai = "^0.28.1"
+redis = "^5.0.1"
+django-celery-beat = "^2.5.0"
+celery = "^5.3.4"
 
 
 [build-system]
