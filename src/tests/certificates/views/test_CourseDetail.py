@@ -2,8 +2,6 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from tests.conftest import user
-
 
 @pytest.mark.django_db
 def test_show_course(user_with_courses_permissions, course):

@@ -3,8 +3,6 @@ from django.contrib.auth.models import Permission
 from django.test import Client
 from django.urls import reverse
 
-from tests.conftest import user
-
 
 @pytest.mark.django_db
 def test_edit_course_with_permission(user, course):

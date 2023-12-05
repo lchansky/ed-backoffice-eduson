@@ -4,7 +4,6 @@ from django.test import Client
 from django.urls import reverse
 
 from certificates.models import Course
-from tests.conftest import user
 
 
 @pytest.mark.django_db

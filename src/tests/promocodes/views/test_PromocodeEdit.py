@@ -5,7 +5,6 @@ from django.contrib.auth.models import Permission
 from django.test import Client
 from django.urls import reverse
 
-from tests.conftest import user
 from promocodes.models import Promocode
 
 

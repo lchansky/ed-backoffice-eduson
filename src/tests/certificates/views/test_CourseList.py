@@ -4,9 +4,6 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from tests.conftest import user
-
-
 
 @pytest.mark.django_db
 def test_cant_view_courses_list_without_login(course):
