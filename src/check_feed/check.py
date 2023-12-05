@@ -32,6 +32,23 @@ CLUSTERS_NUMBERS = {
     11: 'IT',
     12: 'Финансы',
 }
+CLUSTERS_NUMBERS_REVERSE = {
+    'Бухгалтерия': 1,
+    'Аналитика': 2,
+    'Excel': 3,
+    'HR': 4,
+    'Менеджмент': 5,
+    'Маркетинг': 6,
+    'Профессии на удаленке': 7,
+    'Продажи': 8,
+    'Soft-Skills': 9,
+    'Популярные курсы': 10,
+    'Подарочный': 10,
+    'Общее': 10,
+    'Бесплатный курс': 10,
+    'IT': 11,
+    'Финансы': 12,
+}
 COURSE_TYPES = ('Курс', 'Профессия')
 
 
@@ -56,9 +73,9 @@ class FeedChecker:
     def process_values(self):
         self.df["% скидки"] *= 100
         self.df["% скидки"] = self.df["% скидки"].fillna(0).astype(int)
-        self.df["product_enum"] = self.df["product_enum"].fillna(0).astype(int)
-        self.df["category_id"] = self.df["category_id"].fillna(0).astype(int)
-        self.df["is_active"] = self.df["is_active"].fillna(0).astype(int)
+        self.df["ID продукта"] = self.df["ID продукта"].fillna(0).astype(int)
+        # self.df["Категория"] = self.df["Категория"].fillna(0).astype(int)
+        # self.df["Статус"] = self.df["Статус"].fillna(0).astype(int)
         self.df["Полная цена"] = self.df["Полная цена"].fillna(0).astype(int)
         # self.df = self.df.convert_dtypes(convert_floating=False)
         # self.df = self.df.applymap(lambda x: NAN if isinstance(x, NAType) else x)
@@ -68,8 +85,8 @@ class FeedChecker:
         if not self.__is_processed:
             raise ValueError('Перед проверкой нужно вызвать метод обработки данных self.process_values()')
 
-        self.check_name("﻿Название курса (лендинги и amoCRM)")
-        # self.check_url_health_and_length("product_url", 2048)
+        self.check_name("Продукт для шаблонов (название курса)")
+        # self.check_url_health_and_length("Ссылка на лендинг", 2048)
         # self.check_picture_size("picture_url")
         self.check_integer("Цена со скидкой")
         self.check_integer_or_empty("Полная цена")
@@ -77,9 +94,9 @@ class FeedChecker:
 
         self.check_cluster("Кластер")
 #         self.check_url_health_and_length("Ссылка на программу", 35)
-        self.check_integer("product_enum")
+        self.check_integer("ID продукта")
         self.check_integer_or_empty("% скидки")
-        self.check_cluster_number("category_id", "Кластер")
+        # self.check_cluster_number("Категория", "Кластер")
         self.check_course_type("course_type")
         self.check_integer("duration_months")
         self.check_not_empty("Ссылка на лендинг")
@@ -129,7 +146,7 @@ class FeedChecker:
         df = df.fillna(0)
         for idx, row in df.iterrows():
             cluster = row["Кластер"]
-            product_name = row["﻿Название курса (лендинги и amoCRM)"]
+            product_name = row["Продукт для шаблонов (название курса)"]
             is_archived = row["Архивный курс"]
             product_errors = {}
             for col, value in row.items():
@@ -159,14 +176,27 @@ class FeedChecker:
             )
 
         df = self.df.copy(deep=True)
+        print(df['Кластер'].unique())
+        df['category_id'] = df['Кластер'].apply(
+            lambda x:
+            str(CLUSTERS_NUMBERS_REVERSE.get(x, NAN))
+        )
+        df['Статус'] = df['Статус'].apply(lambda x: True if 'Активный в фиде' in str(x) else False)
         new_columns = {
-            '﻿Название курса (лендинги и amoCRM)': 'Название',
+            'Продукт для шаблонов (название курса)': 'Название',
             'Полная цена': 'fake_price',
             '% скидки': 'discount',
-            'product_enum': 'product_key',
+            'ID продукта': 'product_key',
             'Цена со скидкой': 'real_price',
             'В мес со скидкой': 'installment_price',
             'Ссылка на программу': 'program_url',
+            'Ссылка на лендинг': 'product_url',
+            'Описание продукта': 'product_description',
+            'Ссылка на картинку с лендинга': 'picture_url',
+            'Тип курса': 'course_type',
+            'Продолжительность': 'duration_months',
+            'Статус': 'is_active',
+            'Ссылка на демо': 'demo_url',
         }
         df_renamed = df.rename(columns=new_columns)
 
@@ -174,7 +204,8 @@ class FeedChecker:
             'Название', 'category_id', 'is_active', 'product_key', 'product_description',
             'fake_price', 'real_price', 'discount', 'discount_amount', 'installment_price',
             'product_url', 'program_url', 'demo_url', 'picture_url',
-            'duration_months', 'course_type', 'course_difficulty', 'is_blog', 'webinars_exist',
+            'duration_months', 'course_type',
+            # 'course_difficulty', 'is_blog', 'webinars_exist',
         ]
         result_df = df_renamed[columns_to_keep]
         return result_df
