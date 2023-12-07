@@ -28,10 +28,18 @@ def upload_csv(request: WSGIRequest):
                     {'title': 'Отчет о проверке', 'errors_data': dict(errors_data)}
                 )
             elif selected_action == GET_FILE_FOR_UPDATE_PRICES:
-                df = fc.get_df_with_amocrm_friendly_columns()
-                response = HttpResponse(content_type='text/csv')
-                response['Content-Disposition'] = 'attachment; filename="amocrm_update_prices.csv"'
-                df.to_csv(path_or_buf=response, index=False)
+                try:
+                    df = fc.get_df_with_amocrm_friendly_columns()
+                    response = HttpResponse(content_type='text/csv')
+                    response['Content-Disposition'] = 'attachment; filename="amocrm_update_prices.csv"'
+                    df.to_csv(path_or_buf=response, index=False)
+                except Exception as exc:
+                    messages.error(request, f"Ошибка при формировании файла для обновления цен: {exc}")
+                    return render(
+                        request,
+                        'check_feed/upload_csv.html',
+                        {'form': form, 'title': 'Загрузка файла с фидом (.csv)'}
+                    )
                 messages.success(request, "CSV файл для обновления цен успешно сформирован.")
                 return response
 
