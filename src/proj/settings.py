@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'certificates.apps.CertificatesConfig',
     'check_feed.apps.CheckFeedConfig',
     'promocodes.apps.PromocodesConfig',
+    'courses.apps.CoursesConfig',
 
     'rest_framework',
     'rangefilter',
@@ -146,3 +147,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 MIXPANEL = True
+
+
+# TODO: add to dokku ENV NOTION_TOKEN
+# TODO: add to dokku ENV NOTION_COURSES_DATABASE_ID
+
