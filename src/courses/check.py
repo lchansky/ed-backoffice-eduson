@@ -60,8 +60,8 @@ class CoursesTableChecker:
         self.check_number("% скидки")
         self.check_course_type("Тип курса")
         self.check_number("Продолжительность")
-        # self.check_not_empty("Лендинг")  # TODO: вернуть
-        # self.check_not_empty("Formname")  # TODO: вернуть
+        self.check_not_empty("Лендинг")
+        self.check_not_empty("Formname")
         self.check_not_empty_for_free_courses("Ссылка для входа", "Кластер")
         self.check_not_empty_for_free_courses("Ссылка регистрации", "Кластер")
         self.check_price_of_free_and_paid_courses("Цена со скидкой", "Кластер")
