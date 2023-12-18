@@ -9,4 +9,6 @@ SECRET_KEY = 'some_secret_key'
 DEBUG = True
 TEST_RUNNER = 'pytest_runner.DjangoTestSuiteRunner'
 
+BASE_URL = 'http://localhost:8000'
+
 MIXPANEL = False
