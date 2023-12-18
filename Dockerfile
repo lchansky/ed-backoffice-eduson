@@ -13,4 +13,4 @@ COPY . /proj/
 WORKDIR /proj/src
 
 COPY ./entrypoint.sh /
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+#ENTRYPOINT ["sh", "/entrypoint.sh"]

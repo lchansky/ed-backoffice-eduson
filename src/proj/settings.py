@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rangefilter',
     'corsheaders',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -95,6 +96,8 @@ DATABASES = {
     }
 }
 
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -146,9 +149,9 @@ CORS_ALLOWED_ORIGINS = [
     'https://simba.vs2.srv.eduson.tv',
 ]
 
+BASE_URL = "https://simba.vs2.srv.eduson.tv"
+
 MIXPANEL = True
 
 
-# TODO: add to dokku ENV NOTION_TOKEN
-# TODO: add to dokku ENV NOTION_COURSES_DATABASE_ID
 

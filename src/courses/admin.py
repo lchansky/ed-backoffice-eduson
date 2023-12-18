@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from courses.models import ErrorLog, CoursesVersion, PricesHistory
+
+admin.site.register(ErrorLog)
+admin.site.register(CoursesVersion)
+admin.site.register(PricesHistory)
+

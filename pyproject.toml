@@ -25,6 +25,9 @@ django-cors-headers = "^4.2.0"
 mixpanel = "^4.10.0"
 whitenoise = "^6.5.0"
 notion-client = "^2.1.0"
+celery = "^5.3.6"
+django-celery-beat = "^2.5.0"
+redis = "^5.0.1"
 
 
 [build-system]

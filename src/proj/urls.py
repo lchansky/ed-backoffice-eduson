@@ -23,4 +23,5 @@ urlpatterns = [
     path('certificates/', include('certificates.urls')),
     path('check_feed/', include('check_feed.urls')),
     path('promocodes/', include('promocodes.urls')),
+    path('courses/', include('courses.urls')),
 ]
