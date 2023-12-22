@@ -52,6 +52,15 @@
                     </ul>
                 </li>
 
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        📚 Курсы
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'courses_table_for_amo_update_prices' %}">💾 Скачать таблицу для AmoCRM</a></li>
+                    </ul>
+                </li>
+
 
             </ul>
             {% if request.user.is_authenticated %}
