@@ -31,8 +31,8 @@ PROPERTIES_PARSERS = {
     "id": lambda x: x.get("id", None),
     "rich_text": get_rich_text,
     "title": get_title,
-    "url": lambda x: x.get("url", None),
-    "number": lambda x: x.get("number", None),
+    "url": lambda x: x.get("url", None) if x.get("url") != "None" else None,
+    "number": lambda x: x.get("number", None) if x.get("number") != "None" else None,
     "formula": lambda x: x.get("formula", {}).get("number", None),
     "checkbox": lambda x: x.get("checkbox", None),
     "select": lambda x: x.get("select", {}).get("name", None) if x.get("select") else None,
@@ -59,6 +59,15 @@ def parse_properties(properties: dict, properties_parsers: dict = None):
     return processed_properties
 
 
+def get_category_popular_courses(page_id: str = None) -> dict:
+    if not page_id:
+        page_id = os.getenv("NOTION_CATEGORY_POPULAR_COURSES_PAGE_ID")
+    data = notion.pages.retrieve(page_id)
+    properties = data.get("properties", {})
+    properties = parse_properties(properties)
+    return properties
+
+
 class NotionCourseTable:
     def __init__(
             self,
@@ -78,15 +87,6 @@ class NotionCourseTable:
         instance = cls(main_table)
         finish_data = instance.process_relation_properties()
         return finish_data
-
-    @staticmethod
-    def get_category_popular_courses(page_id: str = None) -> dict:
-        if not page_id:
-            page_id = os.getenv("NOTION_CATEGORY_POPULAR_COURSES_PAGE_ID")
-        data = notion.pages.retrieve(page_id)
-        properties = data.get("properties", {})
-        properties = parse_properties(properties)
-        return properties
 
     @classmethod
     def parse_properties_from_db_rows(cls, db_rows: list[dict], relations_from_other_tables: dict = None) -> list[dict]:
@@ -122,10 +122,9 @@ class NotionCourseTable:
         return processed_rows
 
     def process_relation_properties(self) -> list[dict]:
-        popular_courses_category = self.get_category_popular_courses()
+        popular_courses_category = get_category_popular_courses()
         popular_courses_category_id = popular_courses_category["category_id"]
         popular_courses_category_name = popular_courses_category["Name"]
-
 
         for row in self.main_table:
             landings = row.get("Все лендинги", [])
@@ -140,14 +139,14 @@ class NotionCourseTable:
             category_id = None
             main_category_name = "undefined"
             # если кластер "Подарочный", "Общее" или "Бесплатный курс", то основная категория = "Популярные курсы"
+            for category in categories:
+                if category["Основная категория"] is True:
+                    category_id = category.get("category_id", None)
+                    main_category_name = category.get("Name", "undefined")
+                    break
             if row["Кластер"] in ("Подарочный", "Общее", "Бесплатный курс"):
                 category_id = popular_courses_category_id
                 main_category_name = popular_courses_category_name
-                for category in categories:
-                    if category["Основная категория"] is True:
-                        category_id = category.get("category_id", None)
-                        main_category_name = category.get("Name", "undefined")
-                        break
 
             row["category_id"] = category_id
             row["Основная категория"] = main_category_name
